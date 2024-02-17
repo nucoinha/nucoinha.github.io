@@ -138,7 +138,7 @@ const fix_datetime = (df) => {
   let newdf = df.iloc({ rows: datetime.index })
   newdf.addColumn('datetime', datetime.values, {inplace:true})
   newdf.setIndex({ column: "datetime", drop: true, inplace:true});
-  let hold = newdf['circulationSupply'].sub(df['totalFrozen'])
+  let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
   newdf.addColumn('hold', hold, {inplace:true})
   newdf.tail().print()
   return newdf

@@ -11,17 +11,23 @@
 <link rel="stylesheet" href="./css/styles.css">
 </head>
 <body>
-    <h1 align="center"> DESATUALIZADO </h1>
-    <h2 align="center"> Estes dados não estão sendo atualizados em tempo real. </h2>
+    <h1 align="center"> OLD SITE </h1>
+    <p  align="center"> Data Source (CSV): <a id='dataSrc'></a></p>
+    <p  align="center"> Data Last Update: <strong> <a id='lastUpdate'></a></strong></p>
     <script>
         let main = () => {
             const gistId = '1321a7f81ce1f2ecf8e2ef33e73b4bb1'
             const cacheBust = '' + Math.random()
             const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
+	    const dataLink = document.getElementById('dataSrc')
+	    const lastUpdate = document.getElementById('lastUpdate')
+	    dataLink.href = dataPath
+	    dataLink.text = gistId
             dfd.readCSV(dataPath)
             .then(df => {
-                df.print()
                 df = fix_datetime(df)
+		lastUpdate.text = Array.from(df.index).pop()
+		console.log(lastUpdate.text)
                 plot1(df,"plot1")
                 plot2(df,"plot2")
                 plot3(df,"plot3")
