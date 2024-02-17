@@ -84,6 +84,18 @@ const plot1 = (df, htmlId) => {
               stepmode: 'backward'
             },
             {
+              count: 7,
+              label: '1W',
+              step: 'day',
+              stepmode: 'backward'
+            },
+            {
+              count: 30,
+              label: '1M',
+              step: 'day',
+              stepmode: 'backward'
+            },
+            {
               step: 'all'
             }],
           visible: true

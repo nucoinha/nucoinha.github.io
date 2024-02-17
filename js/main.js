@@ -108,7 +108,13 @@ var lightLayout = { template: lightTheme }
 var darkLayout = { template: darkTheme }
 
 const getLatest = (array) => Array.from(array).pop()
-
+const dataPath = (gistId) => {
+  const cacheBust = '' + Math.random();
+  return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
+}
+const downloadCSVUrl = (gistId) => {
+  return `https://gist.githubusercontent.com/nucoinha/${gistId}/`
+}
 const pctChange = (array, period) => {
     return Array.from(array).slice(period ? period : 1).map((value, index) => {
         const prevIndex = index;
