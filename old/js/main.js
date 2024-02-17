@@ -37,8 +37,6 @@ const fix_datetime = (df) => {
       return d.toISOString()
     }).dropDuplicates()
   let newdf = df.iloc({ rows: datetime.index })
-  newdf.print()
-  console.log(newdf.columns)
   newdf.addColumn('datetime', datetime.values, {inplace:true})
   newdf.setIndex({ column: "datetime", drop: true, inplace:true});
   let hold = newdf['supply'].sub(newdf['frozen'])
@@ -193,7 +191,6 @@ const plotPctChange = ({
     title, xlabel, ylabel}) => {
     let dataset = df[columnName]
     let pct_change = [0, ...pctChange(dataset.values,1)]
-    console.log(pct_change)
     let newColumn = columnName + '_pct_change'
     df.addColumn(newColumn, pct_change, {inplace:true})
     var positive = df[newColumn].loc(df[newColumn].ge(0))
@@ -276,7 +273,6 @@ const plot4 = (df, html_id) => {
     };
 
     let stats = df.describe()
-    stats.print()
     stats.addColumn('desc.:', stats.index,{inplace:true})
     stats.plot(html_id).table({
         config: {

@@ -35,8 +35,7 @@
             dfd.readCSV(dataPath)
             .then(df => {
                 df = fix_datetime(df)
-		lastUpdate.text = Array.from(df.index).pop()
-		console.log(lastUpdate.text)
+		lastUpdate.text = new Date(Array.from(df.index).pop()).toLocaleString()
                 plot1(df,"plot1")
                 plot2(df,"plot2")
                 plot3(df,"plot3")
