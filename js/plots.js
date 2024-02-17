@@ -116,7 +116,7 @@ const plot2 = async (df, htmlId) => {
 
   let pctTrace = {
     x: df.index,
-    y: frozenPct.values.map(x => 100*x.toFixed(3)),
+    y: frozenPct.values,
     name: 'Frozen (%)',
     xaxis: 'x',
     yaxis: 'y1',
