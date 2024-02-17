@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+<script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+<script src="https://unpkg.com/@ixjb94/indicators@latest/dist/indicators-browser.js"></script>
+<script src="./js/main.js"></script>
+<link rel="stylesheet" href="./css/styles.css">
+</head>
+<body>
+    <h1 align="center"> DESATUALIZADO </h1>
+    <h2 align="center"> Estes dados não estão sendo atualizados em tempo real. </h2>
+    <script>
+        let main = () => {
+            const gistId = '1321a7f81ce1f2ecf8e2ef33e73b4bb1'
+            const cacheBust = '' + Math.random()
+            const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
+            dfd.readCSV(dataPath)
+            .then(df => {
+                df.print()
+                df = fix_datetime(df)
+                plot1(df,"plot1")
+                plot2(df,"plot2")
+                plot3(df,"plot3")
+            })
+            .catch((err) => {
+              console.log(err);
+            });
+        }
+        main()
+        window.setInterval(main, 5*60*1000 + 10 * 1000)
+    </script>
+    <div id="plot1"></div>
+    <div id="plot2"></div>
+    <div id="plot3"></div>
+</body>
+</html>
