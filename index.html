@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+    <script src="https://unpkg.com/@ixjb94/indicators@latest/dist/indicators-browser.js"></script>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-PR6JZSEC7J"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
+    </script>
+
+
+    <script src="./js/main.js"></script>
+    <script src="./js/plots.js"></script>
+    <link rel="stylesheet" href="./css/styles.css">
+
+  </head>
+  <body>
+
+    <div id="plot"></div>
+
+    <div id="plot2"></div>
+
+    <div class="input-container">
+      <input class="input-field" type="text" id="gistId" placeholder="Enter Gist id:">
+      <button class="btn" onclick="updateChart()">Load Data</button>
+    </div>
+
+    <div class="fab" id="fab">
+      <button onclick="toggleMode()" id="toggleButton">
+        <i class="fas fa-lightbulb lightbulb" id="lightbulb"></i>
+      </button>
+    </div>
+
+    <script>
+
+    const updateChart = () => {
+      const gistId = document.getElementById('gistId').value
+      const cacheBust = '' + Math.random()
+      const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
+
+      dfd.readCSV(dataPath).then(df => {
+        df = fix_datetime(df)
+        plot1(df,'plot')
+        plot2(df,'plot2')
+        setInitialMode();
+      });
+    };
+
+    updateChart();
+
+    var currentTime = new Date().getTime();
+    var initialDelay = (12 * 60 * 1000) - (currentTime % (15 * 60 * 1000)); 
+
+    // Update the chart after an initial delay of 12 minutes
+    setTimeout(function() {
+      // Update the chart every 15 minutes after the initial delay
+      setInterval(updateChart, 15 * 60 * 1000); // 15 minutes in milliseconds
+
+      // Initial update of the chart
+      updateChart();
+    }, initialDelay);
+    </script>
+
+  </body>
+</html>
+
