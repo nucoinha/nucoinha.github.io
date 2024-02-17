@@ -127,7 +127,21 @@ const diff = (array, period) => {
     });
 };
 
-const fix_datetime = (df) => {
+const getOldData = async () => {
+  const cacheBust = '' + Math.random()
+  const gistId = '1321a7f81ce1f2ecf8e2ef33e73b4bb1'
+  const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
+  try {
+      // Read the CSV file
+      const df = await dfd.readCSV(dataPath);
+      return df;
+  } catch (error) {
+      console.error("Error reading CSV:", error);
+      return null;
+  }
+}
+
+const parseDataFrame = async (df) => {
 
   let datetime
 
@@ -148,13 +162,12 @@ const fix_datetime = (df) => {
       newdf.columns.includes('totalFrozen')) {
     let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
     newdf.addColumn('hold', hold, {inplace:true})
-  } else {
-    let nullValues = Array(df.index.length).fill(null)
-    newdf.addColumn('totalFrozen',       nullValues, {inplace:true})
-    newdf.addColumn('circulationSupply', nullValues, {inplace:true})
-    newdf.addColumn('hold',              nullValues, {inplace:true})
+    return newdf;
   }
-  newdf.tail().print()
+  const nullValues = Array(newdf.index.length).fill(null);
+  newdf.addColumn('totalFrozen',       nullValues, {inplace:true})
+  newdf.addColumn('circulationSupply', nullValues, {inplace:true})
+  newdf.addColumn('hold',              nullValues, {inplace:true})
   return newdf
 }
 
@@ -268,3 +281,5 @@ const setURLParam = (key, value) => {
   urlParams.set(key, value);
   window.location.search = urlParams.toString();
 };
+
+

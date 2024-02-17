@@ -50,9 +50,8 @@
       if (!gistId) return
 
       const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
-
-      dfd.readCSV(dataPath).then(df => {
-        df = fix_datetime(df)
+      dfd.readCSV(dataPath).then(async (df) => {
+        df = await parseDataFrame(df)
         plot1(df,'plot')
         plot2(df,'plot2')
         setInitialMode();
