@@ -29,7 +29,7 @@
     <div id="plot2"></div>
 
     <div class="input-container">
-      <input class="input-field" type="text" id="gistId" placeholder="Enter Gist id:">
+      <input class="input-field" type="text" id="gistId" placeholder="Enter Gist id">
       <button class="btn" onclick="updateChart()">Load Data</button>
     </div>
 
@@ -42,8 +42,13 @@
     <script>
 
     const updateChart = () => {
-      const gistId = document.getElementById('gistId').value
       const cacheBust = '' + Math.random()
+      const urlParams = getURLParams()
+      const gistIdInput = document.getElementById('gistId')
+      const gistId = gistIdInput.value ? gistIdInput.value
+                   : urlParams.gistId ? urlParams.gistId : null
+      if (!gistId) return
+
       const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
 
       dfd.readCSV(dataPath).then(df => {
@@ -57,7 +62,7 @@
     updateChart();
 
     var currentTime = new Date().getTime();
-    var initialDelay = (12 * 60 * 1000) - (currentTime % (15 * 60 * 1000)); 
+    var initialDelay = (12 * 60 * 1000) - (currentTime % (15 * 60 * 1000));
 
     // Update the chart after an initial delay of 12 minutes
     setTimeout(function() {

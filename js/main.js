@@ -128,18 +128,32 @@ const diff = (array, period) => {
 };
 
 const fix_datetime = (df) => {
-  let datetime = df['datetime']
-    .map(row => {
-      const d = new Date(row)
-      d.setHours(d.getHours() - 6)
-      return d.toISOString()
-    }).dropDuplicates()
-  datetime.print()
+
+  let datetime
+
+  if (df.columns.includes('datetime')) {
+    datetime = df['datetime']
+      .map(row => {
+        const d = new Date(row)
+        d.setHours(d.getHours() - 6)
+        return d.toISOString()
+      }).dropDuplicates()
+  } else if (df.columns.includes('date')) {
+    datetime = df['date']
+  }
   let newdf = df.iloc({ rows: datetime.index })
   newdf.addColumn('datetime', datetime.values, {inplace:true})
   newdf.setIndex({ column: "datetime", drop: true, inplace:true});
-  let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
-  newdf.addColumn('hold', hold, {inplace:true})
+  if (newdf.columns.includes('circulationSupply') &&
+      newdf.columns.includes('totalFrozen')) {
+    let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
+    newdf.addColumn('hold', hold, {inplace:true})
+  } else {
+    let nullValues = Array(df.index.length).fill(null)
+    newdf.addColumn('totalFrozen',       nullValues, {inplace:true})
+    newdf.addColumn('circulationSupply', nullValues, {inplace:true})
+    newdf.addColumn('hold',              nullValues, {inplace:true})
+  }
   newdf.tail().print()
   return newdf
 }
@@ -235,3 +249,22 @@ const toggleMode = () => {
     setCookie('mode', 'dark', 30);       // Save mode preference in cookie
   }
 }
+
+const isURL = (str) => {
+  try {
+    new URL(str);
+    return true;
+  } catch (error) {
+    return false;
+  }
+}
+
+// Lambda function to get URL parameters
+const getURLParams = () => Object.fromEntries(new URLSearchParams(window.location.search));
+
+// Lambda function to set URL parameters
+const setURLParam = (key, value) => {
+  const urlParams = new URLSearchParams(window.location.search);
+  urlParams.set(key, value);
+  window.location.search = urlParams.toString();
+};

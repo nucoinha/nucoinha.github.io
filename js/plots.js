@@ -25,7 +25,8 @@ const plot1 = (df, htmlId) => {
     marker: {
       mask: volumeMask,
       color: volumeColor
-    }
+    },
+    hovertemplate: 'R$ %{y:,.2f}<br>%{x}'
   };
 
   const frozenDiff = [0, ...diff(df['totalFrozen'].values)]
@@ -41,7 +42,8 @@ const plot1 = (df, htmlId) => {
     marker: {
       mask: frozenMask,
       color: frozenColor
-    }
+    },
+    hovertemplate: '%{y:,.2f} NCN<br>%{x}'
   }
 
   // Create subplot for candlestick chart
@@ -50,15 +52,16 @@ const plot1 = (df, htmlId) => {
     layout: {
       template: 'plotly_dark',
       title: 'NCN / BRL',
+      separators: ',.',
       showlegend: false,
       grid: {rows: 3, columns: 1},
       pattern: 'independent',
       roworder:'bottom to top',
       subplots:[['xy'], ['xy2'], ['xy3']],
       height: '600',
-      yaxis:  {domain: [0.42, 1.0], title: 'Price (R$)'},
-      yaxis2: {domain: [0.22, 0.4], title: 'Volume (R$)'},
-      yaxis3: {domain: [0.00, 0.2], title: 'Frozen Diff'},
+      yaxis:  {domain: [0.42, 1.0], title: 'Price<br>(R$)', separators: ',.'},
+      yaxis2: {domain: [0.22, 0.4], title: 'Volume<br>(R$)'},
+      yaxis3: {domain: [0.00, 0.2], title: 'Frozen<br>(NCN)'},
       xaxis: {
         rangeselector: {
           buttons: [
@@ -121,6 +124,7 @@ const plot2 = async (df, htmlId) => {
     xaxis: 'x',
     yaxis: 'y1',
     fill: 'tozeroy',
+    hovertemplate: '%{y:.2f}%<br>%{x}'
   }
 
   let absTrace = {
@@ -129,6 +133,7 @@ const plot2 = async (df, htmlId) => {
     name: 'Frozen (NCN)',
     xaxis: 'x',
     yaxis: 'y2',
+    hovertemplate: '%{y:,.2f} NCN<br>%{x}'
   }
 
   const layout = {
