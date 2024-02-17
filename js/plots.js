@@ -1,6 +1,5 @@
-const plot1 = (df, htmlId) => {
-  // Extract data for candlestick chart
-  var candlestickData = {
+const getCandlestickData = (df) => {
+  return {
     x: df.index,
     close: df['close'].values,
     high: df['max'].values,
@@ -8,43 +7,66 @@ const plot1 = (df, htmlId) => {
     open: df['open'].values,
     type: 'candlestick',
     name: 'Candlestick',
-    xaxis: 'x',
-    yaxis: 'y'
-  };
+  }
+}
 
+const getVolumeData = (df) => {
   const volumeMask = df['close'].values.map((close, index) => {return close > df['open'].values[index]});
   const volumeColor = volumeMask.map((bool,index) => { return bool ? "green" : "red" })
-
-  var volumeData = {
+  return {
     x: df.index,
     y: df['volume'].values,
     type: 'bar',
     name: 'Volume',
-    xaxis: 'x',
-    yaxis: 'y2',
+    hovertemplate: 'R$ %{y:,.2f}<br>%{x}',
     marker: {
       mask: volumeMask,
       color: volumeColor
     },
-    hovertemplate: 'R$ %{y:,.2f}<br>%{x}'
-  };
+  }
+}
 
+const getFrozenData = (df) => {
   const frozenDiff = [0, ...diff(df['totalFrozen'].values)]
   const frozenMask = frozenDiff.map((value, index) => { return value > 0 });
   const frozenColor = frozenMask.map((value, index) => { return value ? "blue" : "red" });
 
-  var frozenData = {
+  return {
     x: df.index,
     y: frozenDiff,
     type: 'bar',
-    xaxis: 'x',
-    yaxis: 'y3',
     marker: {
       mask: frozenMask,
       color: frozenColor
     },
     hovertemplate: '%{y:,.2f} NCN<br>%{x}'
   }
+}
+
+const updateData = (obj, newdata) => {
+  return Object.keys(newdata).forEach(key => {
+    obj[key] = newdata[key];
+  });
+}
+
+const plot1 = (df, htmlId) => {
+  var candlestickData = getCandlestickData(df)
+  updateData(candlestickData, {
+    xaxis: 'x',
+    yaxis: 'y'
+  });
+
+  var volumeData = getVolumeData(df)
+  updateData(volumeData, {
+    xaxis: 'x',
+    yaxis: 'y2',
+  })
+
+  var frozenData = getFrozenData(df)
+  updateData(frozenData, {
+    xaxis: 'x',
+    yaxis: 'y3',
+  })
 
   // Create subplot for candlestick chart
   var fig = {
@@ -109,7 +131,7 @@ const plot1 = (df, htmlId) => {
   };
 
   // Plot the chart
-  Plotly.newPlot(htmlId, fig.data, fig.layout);
+  Plotly.newPlot(htmlId, fig.data, fig.layout, {responsive: true});
 }
 
 const plot2 = async (df, htmlId) => {
@@ -151,7 +173,7 @@ const plot2 = async (df, htmlId) => {
   const layout = {
     title: "Frozen",
     showlegend: false,
-    height: 600,
+    height: 650,
     xaxis: {
       title: "Date",
     },
@@ -170,35 +192,37 @@ const plot2 = async (df, htmlId) => {
 
   var data = [absTrace, pctTrace]
   
-  Plotly.newPlot(htmlId, data, layout);
+  Plotly.newPlot(htmlId, data, layout, {responsive: true});
 }
 
 const plot3 = (df, htmlId) => {
-  let frozenPctChange = plotPctChange({
+  let frozen = plotPctChange({
     df: df,
-    columnName:'frozen',
+    columnName:'totalFrozen',
     positiveLabel:'Freezing',
     negativeLabel:'Melting',
     title: "Frozen % Change",
     xlabel:'Date',
     ylabel:'%'
   })
-  let supplyPctChange = plotPctChange({
+  Plotly.newPlot(htmlId+3, frozen.data, frozen.layout);
+  let supply = plotPctChange({
     df: df,
-    columnName:'supply',
+    columnName:'circulationSupply',
     positiveLabel:'Buy',
     negativeLabel:'Sell',
     title: "Buyers / Sellers (% Change)",
     xlabel:'Date',
     ylabel:'%'
   })
-  //Plotly.newPlot(htmlId, plot.data, plot.layout);
+  Plotly.newPlot(htmlId+4, supply.data, supply.layout);
 }
 
 const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
+  const negative_marker = { color: 'red' }
+  const positive_marker = { color: 'green' }
   let dataset = df[columnName]
   let pct_change = [0, ...pctChange(dataset.values,1)]
-  console.log(pct_change)
   let newColumn = columnName + '_pct_change'
   df.addColumn(newColumn, pct_change, {inplace:true})
   var positive = df[newColumn].loc(df[newColumn].ge(0))

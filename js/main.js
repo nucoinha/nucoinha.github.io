@@ -48,8 +48,11 @@ var lightTheme = {
   colors: {
     positive: '#3D9970',
     negative: '#FF4136',
-    frozen:   '#73CEE7',
-    melting:  '#E78C73',
+    frozen:   '#0a70af',
+    melting:  '#cf2c2f',
+    navbarColor: '#ffdad9',
+    buttonsColor: '#73cee7',
+    textColor: '#fff',
   }
 };
 
@@ -94,13 +97,16 @@ var darkTheme = {
     // Define color scheme
     colorway: ['#636efa', '#EF553B', '#00cc96', '#ab63fa', '#FFA15A'],
     plot_bgcolor:  '#211a1a',  // Dark mode background color
-    paper_bgcolor: '#5c3f3f',  // Dark mode paper background color
+    paper_bgcolor: '#2f2525',  // Dark mode paper background color
   },
   colors: {
     positive: '#3D9970',
     negative: '#FF4136',
-    frozen:   '#085786',
-    melting:  '#b3261e'
+    frozen:   '#73CEE7',
+    melting:  '#E78C73',
+    navbarColor: '#5c3f3f', // lighter brown
+    buttonsColor: '#ffdad9', // the lightLayout navbar color
+    textColor: '#211a1a',
   }
 };
 
@@ -205,8 +211,6 @@ const getCookie = (name) => {
 }
 
 const applyLightMode = () => {
-    var fab = document.getElementById('fab');
-    var lightbulb = document.getElementById('lightbulb');
     var plot = document.getElementById('plot');
     Plotly.relayout('plot', lightLayout);// Switch to light mode layout
     Plotly.relayout('plot2', lightLayout); // Switch to dark mode layout
@@ -222,13 +226,22 @@ const applyLightMode = () => {
     const volumeMask      = volumeBars.marker.mask
     const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
     Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
-    fab.style.backgroundColor = 'white'; // FAB background color in light mode
-    lightbulb.style.color = 'black';     // Light bulb color in light mode
+
+    var fab = document.getElementById('fab');
+    var lamp = document.getElementById('lightbulb');
+    var navbar = document.getElementById('navbar');
+    fab.style['background-color'] = lightLayout.template.colors.navbarColor
+    lamp.style['color'] = darkLayout.template.colors.textColor
+    navbar.style['background-color'] = lightLayout.template.colors.navbarColor;
+    var getCSVButton = document.getElementById('dataSrc')
+    var loadButton = document.getElementById('loadButton')
+    Array.from([getCSVButton, loadButton]).forEach(button => {
+      button.style['background-color'] = lightLayout.template.colors.buttonsColor;
+      button.style['color']            = lightLayout.template.colors.textColor;
+    })
 }
 
 const applyDarkMode = () => {
-    var fab = document.getElementById('fab');
-    var lightbulb = document.getElementById('lightbulb');
     var plot = document.getElementById('plot');
     Plotly.relayout('plot', darkLayout); // Switch to dark mode layout
     Plotly.relayout('plot2', darkLayout); // Switch to dark mode layout
@@ -244,8 +257,19 @@ const applyDarkMode = () => {
     const volumeMask      = volumeBars.marker.mask
     const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
     Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
-    fab.style.backgroundColor = 'black'; // FAB background color in dark mode
-    lightbulb.style.color = 'white';     // Light bulb color in dark mode
+
+    var fab = document.getElementById('fab');
+    var lamp = document.getElementById('lightbulb');
+    var navbar = document.getElementById('navbar');
+    fab.style['background-color']    = darkLayout.template.colors.navbarColor
+    lamp.style['color']              = lightLayout.template.colors.textColor
+    navbar.style['background-color'] = darkLayout.template.colors.navbarColor;
+    var getCSVButton = document.getElementById('dataSrc')
+    var loadButton = document.getElementById('loadButton')
+    Array.from([getCSVButton, loadButton]).forEach(button => {
+      button.style['background-color'] = darkLayout.template.colors.buttonsColor;
+      button.style['color']            = darkLayout.template.colors.textColor;
+    })
 }
 
 // Function to set the initial mode based on the cookie value

@@ -23,14 +23,16 @@
 
   </head>
   <body>
+    <div class="content">
 
-    <div id="plot"></div>
+    <div class="plot" id="plot"></div>
+    <div class="plot" id="plot2"></div>
 
-    <div id="plot2"></div>
+    </div>
 
-    <div class="input-container">
-      <input class="input-field" type="text" id="gistId" placeholder="Enter Gist id">
-      <button class="btn" onclick="updateChart()">Load Data</button>
+    <div class="navbar" id="navbar">
+      <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
+      <button class="btn" id="loadButton" onclick="updateChart()">Load Data</button>
       <a class="btn" target="_blank" id="dataSrc">Get CSV</a>
     </div>
 
@@ -50,6 +52,10 @@
       const gistId = gistIdInput.value ? gistIdInput.value
                    : urlParams.gistId ? urlParams.gistId : null
       if (!gistId) return
+
+      if (!urlParams.gistId || urlParams.gistId !== gistId) setURLParam('gistId',gistId)
+      if (!gistIdInput.value || gistIdInput.value !== gistId) gistIdInput.value = gistId
+
       const dataUrl = dataPath(gistId)
       getCSVButton.href = downloadCSVUrl(gistId)
 
@@ -75,6 +81,19 @@
       updateChart();
     }, initialDelay);
     </script>
+
+    <script>
+    let prevScrollpos = window.pageYOffset;
+    window.onscroll = function() {
+      let currentScrollPos = window.pageYOffset;
+      if (prevScrollpos > currentScrollPos) {
+        document.getElementById("navbar").classList.remove("hide");
+      } else {
+        document.getElementById("navbar").classList.add("hide");
+      }
+      prevScrollpos = currentScrollPos;
+    }
+  </script>
 
   </body>
 </html>
