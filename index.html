@@ -26,6 +26,7 @@
     <div class="content">
       <div class="navbar" id="navbar">
         <div>
+          <a class="warning" id="lastUpdate"></a>
           <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
         </div>
         <div>
@@ -53,6 +54,7 @@
       const urlParams = getURLParams()
       const gistIdInput = document.getElementById('gistId')
       const getCSVButton = document.getElementById('dataSrc')
+      const lastUpdateLabel = document.getElementById('lastUpdate')
 
       const gistId = gistIdInput.value ? gistIdInput.value
                    : urlParams.gistId ? urlParams.gistId : null
@@ -66,6 +68,7 @@
 
       dfd.readCSV(dataUrl).then(async (df) => {
         df = await parseDataFrame(df)
+        lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
         plot1(df,'plot')
         plot2(df,'plot2')
         setInitialMode();

@@ -119,7 +119,13 @@ var darkTheme = {
 var lightLayout = { template: lightTheme }
 var darkLayout = { template: darkTheme }
 
-const getLatest = (array) => Array.from(array).pop()
+const getLatest = (array) => { return Array.from(array).pop() }
+
+const getLastUpdate = (df) => {
+  const d = new Date(getLatest(df.index))
+  return new Date(d.setHours(d.getHours() + 3)).toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'})
+}
+
 const dataPath = (gistId) => {
   const cacheBust = '' + Math.random();
   return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
@@ -172,6 +178,11 @@ const parseDataFrame = async (df) => {
       }).dropDuplicates()
   } else if (df.columns.includes('date')) {
     datetime = df['date']
+      .map(row => {
+        const d = new Date(row)
+        d.setHours(d.getHours() + 21) // Daily updates at 00:00 of server time which is 21:00
+        return d.toISOString()
+      })
   }
   let newdf = df.iloc({ rows: datetime.index })
   newdf.addColumn('datetime', datetime.values, {inplace:true})
