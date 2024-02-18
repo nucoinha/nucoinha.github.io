@@ -18,6 +18,9 @@
 
 
     <script src="./js/main.js"></script>
+    <script src="./js/utils.js"></script>
+    <script src="./js/math.js"></script>
+    <script src="./js/themes.js"></script>
     <script src="./js/plots.js"></script>
     <link rel="stylesheet" href="./css/styles.css">
 
@@ -71,6 +74,7 @@
         lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
         plot1(df,'plot')
         plot2(df,'plot2')
+	bindPlot('plot','plot2')
         setInitialMode();
       });
     };
@@ -105,4 +109,3 @@
 
   </body>
 </html>
-

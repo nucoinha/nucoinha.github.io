@@ -1,126 +1,6 @@
 const library = indicators
 const ta = new library.IndicatorsNormalized()
 
-// Initial layout for light mode
-var lightTheme = {
-  layout: {
-    // Define layout properties
-    title: {
-      font: {
-        family: 'Arial',
-        size: 24,
-        color: '#333333'
-      },
-      x: 0.5 // Align title to the center
-    },
-    xaxis: {
-      title: {
-        font: {
-          family: 'Arial',
-          size: 16,
-          color: '#555555'
-        },
-        tickfont: {
-          family: 'Arial',
-          color: '#555555'
-        }
-      },
-      rangeselector: {
-        bgcolor: '#f5f0f0',
-      }
-    },
-    yaxis: {
-      title: {
-        font: {
-          family: 'Arial',
-          size: 16,
-          color: '#555555'
-        },
-        tickfont: {
-          family: 'Arial',
-          size: 16,
-          color: '#555555'
-        }
-      }
-    },
-    // Define color scheme
-    colorway: ['#636efa', '#EF553B', '#00cc96', '#ab63fa', '#FFA15A'],
-    plot_bgcolor: 'rgba(255,255,255,0.8)',  // Light mode background color
-    paper_bgcolor: '#f5f0f0', // Light mode paper background color
-  },
-  colors: {
-    positive: '#3D9970',
-    negative: '#FF4136',
-    frozen:   '#0a70af',
-    melting:  '#cf2c2f',
-    navbarColor: '#ffdad9',
-    buttonsColor: '#73cee7',
-    textColor: '#fff',
-  }
-};
-
-var darkTheme = {
-  layout: {
-    // Define layout properties
-    font: { color: '#CCCCCC' },
-    title: {
-      font: {
-        family: 'Arial',
-        size: 24,
-        color: '#FFFFFF'
-      },
-      x: 0.5 // Align title to the center
-    },
-    xaxis: {
-      title: {
-        font: {
-          family: 'Arial',
-          size: 16,
-          color: '#CCCCCC'
-        },
-        tickfont: {
-          family: 'Arial',
-          color: '#CCCCCC'
-        }
-      },
-      rangeselector: {
-        bgcolor: '#2f2525',
-      }
-    },
-    yaxis: {
-      title: {
-        font: {
-          family: 'Arial',
-          size: 16,
-          color: '#CCCCCC'
-        },
-        tickfont: {
-          family: 'Arial',
-          color: '#CCCCCC'
-        }
-      }
-    },
-    // Define color scheme
-    colorway: ['#636efa', '#EF553B', '#00cc96', '#ab63fa', '#FFA15A'],
-    plot_bgcolor:  '#211a1a',  // Dark mode background color
-    paper_bgcolor: '#2f2525',  // Dark mode paper background color
-  },
-  colors: {
-    positive: '#3D9970',
-    negative: '#FF4136',
-    frozen:   '#73CEE7',
-    melting:  '#E78C73',
-    navbarColor: '#5c3f3f', // lighter brown
-    buttonsColor: '#ffdad9', // the lightLayout navbar color
-    textColor: '#211a1a',
-  }
-};
-
-var lightLayout = { template: lightTheme }
-var darkLayout = { template: darkTheme }
-
-const getLatest = (array) => { return Array.from(array).pop() }
-
 const getLastUpdate = (df) => {
   const d = new Date(getLatest(df.index))
   return new Date(d.setHours(d.getHours() + 3)).toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'})
@@ -133,24 +13,6 @@ const dataPath = (gistId) => {
 const downloadCSVUrl = (gistId) => {
   return `https://gist.githubusercontent.com/nucoinha/${gistId}/`
 }
-const pctChange = (array, period) => {
-  return Array.from(array).slice(period ? period : 1).map((value, index) => {
-    const prevIndex = index;
-    const prevValue = array[index];
-    const change = ((value - prevValue) / prevValue) * 100;
-    return change;
-  });
-};
-
-const diff = (array, period) => {
-  return Array.from(array).slice(period ? period : 1).map((value, index) => {
-    const prevIndex = index;
-    const prevValue = array[index];
-    const change = (value - prevValue);
-    return change;
-  });
-};
-
 const getOldData = async () => {
   const cacheBust = '' + Math.random()
   const gistId = '1321a7f81ce1f2ecf8e2ef33e73b4bb1'
@@ -178,11 +40,6 @@ const parseDataFrame = async (df) => {
       }).dropDuplicates()
   } else if (df.columns.includes('date')) {
     datetime = df['date']
-      .map(row => {
-        const d = new Date(row)
-        d.setHours(d.getHours() + 21) // Daily updates at 00:00 of server time which is 21:00
-        return d.toISOString()
-      })
   }
   let newdf = df.iloc({ rows: datetime.index })
   newdf.addColumn('datetime', datetime.values, {inplace:true})
@@ -193,38 +50,32 @@ const parseDataFrame = async (df) => {
     newdf.addColumn('hold', hold, {inplace:true})
     return newdf;
   }
+
+  oldDataFrame = await getOldData()
+  // Convert datetimes into a date-only, then drop the duplicates keeping the latest value
+  const resampled = oldDataFrame['datetime']
+                      .map(val => new Date(val).toISOString().split('T')[0])
+                      .dropDuplicates({ keep: "last" })
+  // Use the resampled index, to index the dataFrame, this way we get the latest info of a given day
+  oldDataFrame = oldDataFrame.loc({ rows: resampled.index, columns: ['datetime', 'frozen', 'supply']})
+  oldDataFrame.addColumn('datetime', resampled)
+  oldDataFrame.resetIndex({ inplace: true })
+  // rename for conforming with new column names
+  oldDataFrame.rename({'datetime': 'date', 'frozen':'totalFrozen', 'supply':'circulationSupply'}, {inplace:true})
+
+  // Merge the interval data into the daily DataFrame based on date
+  const mergedData = dfd.merge({left: newdf, right:oldDataFrame,
+    on: ['date'],
+    how: 'left'
+  });
+  mergedData.setIndex({ column: 'date', drop: true, inplace:true});
+  mergedData.tail().print()
+  return mergedData 
   const nullValues = Array(newdf.index.length).fill(null);
   newdf.addColumn('totalFrozen',       nullValues, {inplace:true})
   newdf.addColumn('circulationSupply', nullValues, {inplace:true})
   newdf.addColumn('hold',              nullValues, {inplace:true})
   return newdf
-}
-
-// Function to set a cookie
-const setCookie = (name, value, days) => {
-  var expires = "";
-  if (days) {
-    var date = new Date();
-    date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-    expires = "; expires=" + date.toUTCString();
-  }
-  document.cookie = name + "=" + (value || "") + expires + "; path=/";
-}
-
-// Function to get a cookie
-const getCookie = (name) => {
-  var nameEQ = name + "=";
-  var ca = document.cookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1, c.length);
-    }
-    if (c.indexOf(nameEQ) == 0) {
-      return c.substring(nameEQ.length, c.length);
-    }
-  }
-  return null;
 }
 
 const applyLightMode = () => {
@@ -310,23 +161,26 @@ const toggleMode = () => {
   }
 }
 
-const isURL = (str) => {
-  try {
-    new URL(str);
-    return true;
-  } catch (error) {
-    return false;
-  }
+const bindPlot = (plotId, boundPlotId) => {
+  const plot = document.getElementById(plotId)
+  plot.on('plotly_relayout', (eventData) => {
+    if (eventData && eventData['xaxis.autorange'] === true) {
+        // Update the x-axis range of plot2 to auto-range
+        Plotly.relayout('plot2', {
+            'xaxis.autorange': true
+        });
+    } else if (eventData && eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
+      // Get the new x-axis range
+      const newRange = [
+        eventData['xaxis.range[0]'],
+        eventData['xaxis.range[1]']
+      ];
+
+      // Update the x-axis range of plot2
+      Plotly.relayout(boundPlotId, {
+        'xaxis.range[0]': newRange[0],
+        'xaxis.range[1]': newRange[1]
+      });
+    }
+  });
 }
-
-// Lambda function to get URL parameters
-const getURLParams = () => Object.fromEntries(new URLSearchParams(window.location.search));
-
-// Lambda function to set URL parameters
-const setURLParam = (key, value) => {
-  const urlParams = new URLSearchParams(window.location.search);
-  urlParams.set(key, value);
-  window.location.search = urlParams.toString();
-};
-
-
