@@ -25,6 +25,9 @@ var lightTheme = {
           color: '#555555'
         }
       },
+      rangeselector: {
+        bgcolor: '#f5f0f0',
+      }
     },
     yaxis: {
       title: {
@@ -79,6 +82,9 @@ var darkTheme = {
           family: 'Arial',
           color: '#CCCCCC'
         }
+      },
+      rangeselector: {
+        bgcolor: '#2f2525',
       }
     },
     yaxis: {
@@ -212,7 +218,7 @@ const getCookie = (name) => {
 
 const applyLightMode = () => {
   var plot = document.getElementById('plot');
-  Plotly.relayout('plot', lightLayout);// Switch to light mode layout
+  Plotly.relayout('plot', lightLayout); // Switch to dark mode layout
   Plotly.relayout('plot2', lightLayout); // Switch to dark mode layout
   const frozenBars = plot.data[1]
   const frozenColorUp   = lightLayout.template.colors.frozen
