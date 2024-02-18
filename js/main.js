@@ -24,7 +24,7 @@ var lightTheme = {
           family: 'Arial',
           color: '#555555'
         }
-      }
+      },
     },
     yaxis: {
       title: {
@@ -122,21 +122,21 @@ const downloadCSVUrl = (gistId) => {
   return `https://gist.githubusercontent.com/nucoinha/${gistId}/`
 }
 const pctChange = (array, period) => {
-    return Array.from(array).slice(period ? period : 1).map((value, index) => {
-        const prevIndex = index;
-        const prevValue = array[index];
-        const change = ((value - prevValue) / prevValue) * 100;
-        return change;
-    });
+  return Array.from(array).slice(period ? period : 1).map((value, index) => {
+    const prevIndex = index;
+    const prevValue = array[index];
+    const change = ((value - prevValue) / prevValue) * 100;
+    return change;
+  });
 };
 
 const diff = (array, period) => {
-    return Array.from(array).slice(period ? period : 1).map((value, index) => {
-        const prevIndex = index;
-        const prevValue = array[index];
-        const change = (value - prevValue);
-        return change;
-    });
+  return Array.from(array).slice(period ? period : 1).map((value, index) => {
+    const prevIndex = index;
+    const prevValue = array[index];
+    const change = (value - prevValue);
+    return change;
+  });
 };
 
 const getOldData = async () => {
@@ -144,12 +144,12 @@ const getOldData = async () => {
   const gistId = '1321a7f81ce1f2ecf8e2ef33e73b4bb1'
   const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
   try {
-      // Read the CSV file
-      const df = await dfd.readCSV(dataPath);
-      return df;
+    // Read the CSV file
+    const df = await dfd.readCSV(dataPath);
+    return df;
   } catch (error) {
-      console.error("Error reading CSV:", error);
-      return null;
+    console.error("Error reading CSV:", error);
+    return null;
   }
 }
 
@@ -171,7 +171,7 @@ const parseDataFrame = async (df) => {
   newdf.addColumn('datetime', datetime.values, {inplace:true})
   newdf.setIndex({ column: "datetime", drop: true, inplace:true});
   if (newdf.columns.includes('circulationSupply') &&
-      newdf.columns.includes('totalFrozen')) {
+    newdf.columns.includes('totalFrozen')) {
     let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
     newdf.addColumn('hold', hold, {inplace:true})
     return newdf;
@@ -211,65 +211,65 @@ const getCookie = (name) => {
 }
 
 const applyLightMode = () => {
-    var plot = document.getElementById('plot');
-    Plotly.relayout('plot', lightLayout);// Switch to light mode layout
-    Plotly.relayout('plot2', lightLayout); // Switch to dark mode layout
-    const frozenBars = plot.data[1]
-    const frozenColorUp   = lightLayout.template.colors.frozen
-    const frozenColorDown = lightLayout.template.colors.melting
-    const frozenMask = frozenBars.marker.mask
-    const frozenColors = frozenBars.marker.mask.map(isTrue => { return isTrue ? frozenColorUp : frozenColorDown }) 
-    Plotly.restyle('plot', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
-    const volumeBars      = plot.data[2]
-    const volumeColorUp   = lightLayout.template.colors.positive
-    const volumeColorDown = lightLayout.template.colors.negative
-    const volumeMask      = volumeBars.marker.mask
-    const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
-    Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
+  var plot = document.getElementById('plot');
+  Plotly.relayout('plot', lightLayout);// Switch to light mode layout
+  Plotly.relayout('plot2', lightLayout); // Switch to dark mode layout
+  const frozenBars = plot.data[1]
+  const frozenColorUp   = lightLayout.template.colors.frozen
+  const frozenColorDown = lightLayout.template.colors.melting
+  const frozenMask = frozenBars.marker.mask
+  const frozenColors = frozenBars.marker.mask.map(isTrue => { return isTrue ? frozenColorUp : frozenColorDown }) 
+  Plotly.restyle('plot', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
+  const volumeBars      = plot.data[2]
+  const volumeColorUp   = lightLayout.template.colors.positive
+  const volumeColorDown = lightLayout.template.colors.negative
+  const volumeMask      = volumeBars.marker.mask
+  const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
+  Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
 
-    var fab = document.getElementById('fab');
-    var lamp = document.getElementById('lightbulb');
-    var navbar = document.getElementById('navbar');
-    fab.style['background-color'] = lightLayout.template.colors.navbarColor
-    lamp.style['color'] = darkLayout.template.colors.textColor
-    navbar.style['background-color'] = lightLayout.template.colors.navbarColor;
-    var getCSVButton = document.getElementById('dataSrc')
-    var loadButton = document.getElementById('loadButton')
-    Array.from([getCSVButton, loadButton]).forEach(button => {
-      button.style['background-color'] = lightLayout.template.colors.buttonsColor;
-      button.style['color']            = lightLayout.template.colors.textColor;
-    })
+  var fab = document.getElementById('fab');
+  var lamp = document.getElementById('lightbulb');
+  var navbar = document.getElementById('navbar');
+  fab.style['background-color'] = lightLayout.template.colors.navbarColor
+  lamp.style['color'] = darkLayout.template.colors.textColor
+  navbar.style['background-color'] = lightLayout.template.colors.navbarColor;
+  var getCSVButton = document.getElementById('dataSrc')
+  var loadButton = document.getElementById('loadButton')
+  Array.from([getCSVButton, loadButton]).forEach(button => {
+    button.style['background-color'] = lightLayout.template.colors.buttonsColor;
+    button.style['color']            = lightLayout.template.colors.textColor;
+  })
 }
 
 const applyDarkMode = () => {
-    var plot = document.getElementById('plot');
-    Plotly.relayout('plot', darkLayout); // Switch to dark mode layout
-    Plotly.relayout('plot2', darkLayout); // Switch to dark mode layout
-    const frozenBars = plot.data[1]
-    const frozenColorUp   = darkLayout.template.colors.frozen
-    const frozenColorDown = darkLayout.template.colors.melting
-    const frozenMask = frozenBars.marker.mask
-    const frozenColors = frozenBars.marker.mask.map(isTrue => { return isTrue ? frozenColorUp : frozenColorDown }) 
-    Plotly.restyle('plot', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
-    const volumeBars = plot.data[2]
-    const volumeColorUp   = darkLayout.template.colors.positive
-    const volumeColorDown = darkLayout.template.colors.negative
-    const volumeMask      = volumeBars.marker.mask
-    const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
-    Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
+  var plot = document.getElementById('plot');
+  Plotly.relayout('plot', darkLayout); // Switch to dark mode layout
+  Plotly.relayout('plot2', darkLayout); // Switch to dark mode layout
+  const frozenBars = plot.data[1]
+  const frozenColorUp   = darkLayout.template.colors.frozen
+  const frozenColorDown = darkLayout.template.colors.melting
+  const frozenMask = frozenBars.marker.mask
+  const frozenColors = frozenBars.marker.mask.map(isTrue => { return isTrue ? frozenColorUp : frozenColorDown }) 
+  Plotly.restyle('plot', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
+  const volumeBars = plot.data[2]
+  const volumeColorUp   = darkLayout.template.colors.positive
+  const volumeColorDown = darkLayout.template.colors.negative
+  const volumeMask      = volumeBars.marker.mask
+  const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
+  Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
 
-    var fab = document.getElementById('fab');
-    var lamp = document.getElementById('lightbulb');
-    var navbar = document.getElementById('navbar');
-    fab.style['background-color']    = darkLayout.template.colors.navbarColor
-    lamp.style['color']              = lightLayout.template.colors.textColor
-    navbar.style['background-color'] = darkLayout.template.colors.navbarColor;
-    var getCSVButton = document.getElementById('dataSrc')
-    var loadButton = document.getElementById('loadButton')
-    Array.from([getCSVButton, loadButton]).forEach(button => {
-      button.style['background-color'] = darkLayout.template.colors.buttonsColor;
-      button.style['color']            = darkLayout.template.colors.textColor;
-    })
+  var fab = document.getElementById('fab');
+  var lamp = document.getElementById('lightbulb');
+  var navbar = document.getElementById('navbar');
+  fab.style['background-color']    = darkLayout.template.colors.navbarColor
+  lamp.style['color']              = lightLayout.template.colors.textColor
+  navbar.style['background-color'] = darkLayout.template.colors.navbarColor;
+  var getCSVButton = document.getElementById('dataSrc')
+  var loadButton = document.getElementById('loadButton')
+  Array.from([getCSVButton, loadButton]).forEach(button => {
+    button.style['background-color'] = darkLayout.template.colors.buttonsColor;
+    button.style['color']            = darkLayout.template.colors.textColor;
+  })
 }
 
 // Function to set the initial mode based on the cookie value
