@@ -24,23 +24,28 @@
   </head>
   <body>
     <div class="content">
+      <div class="navbar" id="navbar">
+        <div>
+          <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
+        </div>
+        <div>
+          <button class="btn" id="loadButton" onclick="updateChart()">Load Data</button>
+          <a class="btn" target="_blank" id="dataSrc">Get CSV</a>
+        </div>
+      </div>
 
-    <div class="plot" id="plot"></div>
-    <div class="plot" id="plot2"></div>
+
+      <div class="plot" id="plot"></div>
+      <div class="plot" id="plot2"></div>
+
+      <div class="fab" id="fab">
+        <button onclick="toggleMode()" id="toggleButton">
+          <i class="fas fa-lightbulb lightbulb" id="lightbulb"></i>
+        </button>
+      </div>
 
     </div>
 
-    <div class="navbar" id="navbar">
-      <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
-      <button class="btn" id="loadButton" onclick="updateChart()">Load Data</button>
-      <a class="btn" target="_blank" id="dataSrc">Get CSV</a>
-    </div>
-
-    <div class="fab" id="fab">
-      <button onclick="toggleMode()" id="toggleButton">
-        <i class="fas fa-lightbulb lightbulb" id="lightbulb"></i>
-      </button>
-    </div>
 
     <script>
 
