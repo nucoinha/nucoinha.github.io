@@ -1,11 +1,13 @@
 const getCandlestickData = (df) => {
   return {
     x: df.index,
+    y: df['avg'].values,
     close: df['close'].values,
     high: df['max'].values,
     low: df['min'].values,
     open: df['open'].values,
-    type: 'candlestick',
+    //type: 'candlestick',
+    type: 'line',
     name: 'Candlestick',
   }
 }
