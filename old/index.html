@@ -35,7 +35,8 @@
             dfd.readCSV(dataPath)
             .then(df => {
                 df = fix_datetime(df)
-		lastUpdate.text = new Date(Array.from(df.index).pop()).toLocaleString()
+		// Gotta hate timezones xD
+		lastUpdate.text = new Date(Array.from(df.index).pop()).toLocaleString('pt-BR', {timeZone: 'Europe/London'})
                 plot1(df,"plot1")
                 plot2(df,"plot2")
                 plot3(df,"plot3")
