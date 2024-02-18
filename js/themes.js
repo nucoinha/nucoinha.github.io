@@ -40,6 +40,11 @@ var lightTheme = {
         }
       }
     },
+    updatemenus: {
+      bgcolor: '#f5f0f0',
+      pad: {'r': 10, 't': 10},
+      showactive: false
+    },
     // Define color scheme
     colorway: ['#636efa', '#EF553B', '#00cc96', '#ab63fa', '#FFA15A'],
     plot_bgcolor: 'rgba(255,255,255,0.8)',  // Light mode background color
@@ -96,6 +101,11 @@ var darkTheme = {
           color: '#CCCCCC'
         }
       }
+    },
+    updatemenus: {
+      bgcolor: '#ffdad9',
+      pad: {'r': 10, 't': 10},
+      showactive: false,
     },
     // Define color scheme
     colorway: ['#636efa', '#EF553B', '#00cc96', '#ab63fa', '#FFA15A'],

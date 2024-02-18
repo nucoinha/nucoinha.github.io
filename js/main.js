@@ -163,24 +163,46 @@ const toggleMode = () => {
 
 const bindPlot = (plotId, boundPlotId) => {
   const plot = document.getElementById(plotId)
-  plot.on('plotly_relayout', (eventData) => {
-    if (eventData && eventData['xaxis.autorange'] === true) {
-        // Update the x-axis range of plot2 to auto-range
-        Plotly.relayout('plot2', {
-            'xaxis.autorange': true
-        });
-    } else if (eventData && eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
+  const applyToAll = (eventData) => {
+    if (!eventData) return
+    if (eventData['xaxis.autorange'] === true) {
+      // Update the x-axis range of plot2 to auto-range
+      Plotly.relayout(boundPlotId, {
+        'xaxis.autorange': true
+      });
+    }
+
+    if (eventData['xaxis.range[0]'] && eventData['xaxis.range[1]']) {
       // Get the new x-axis range
-      const newRange = [
+      plot.saveX  = [
         eventData['xaxis.range[0]'],
         eventData['xaxis.range[1]']
+      ];
+      plot.saveY = [
+        plot.layout.yaxis.range[0],
+        plot.layout.yaxis.range[1],
       ];
 
       // Update the x-axis range of plot2
       Plotly.relayout(boundPlotId, {
-        'xaxis.range[0]': newRange[0],
-        'xaxis.range[1]': newRange[1]
+        'xaxis.range[0]': plot.saveX[0],
+        'xaxis.range[1]': plot.saveX[1]
       });
     }
-  });
+
+    if (eventData.length > 0) {
+      let chartType = eventData[0].type
+      if (Array.from(['candlestick','line','scatter']).includes(chartType)) {
+        if (!plot.saveX && !plot.saveY) return
+        Plotly.relayout(plotId, {
+          'xaxis.range[0]': plot.saveX[0],
+          'xaxis.range[1]': plot.saveX[1],
+          'yaxis.range[0]': plot.saveY[0],
+          'yaxis.range[1]': plot.saveY[1]
+        });
+      }
+    }
+  };
+  plot.on('plotly_relayout', applyToAll)
+  plot.on('plotly_restyle', applyToAll)
 }

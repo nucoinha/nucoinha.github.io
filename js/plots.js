@@ -1,13 +1,17 @@
 const getCandlestickData = (df) => {
+  // For line graph if there's no close price use avg column
+  const prices = df['close'].values.map(
+    (value, index) => (!value) ? df['avg'].values[index] : value
+  )
   return {
     x: df.index,
-    y: df['avg'].values,
+    y: prices,
     close: df['close'].values,
     high: df['max'].values,
     low: df['min'].values,
     open: df['open'].values,
     //type: 'candlestick',
-    type: 'line',
+    type: 'scatter',
     name: 'Candlestick',
   }
 }
@@ -70,14 +74,39 @@ const plot1 = (df, htmlId) => {
     yaxis: 'y3',
   })
 
+
+  var updatemenus = [
+    {
+      buttons: [
+        {
+          args: ['type', 'line', [0]],
+          label: 'Line',
+          method:'restyle'
+        },
+        {
+          args: ['type', 'candlestick',[0]],
+          label: 'Candles',
+          method: 'restyle'
+        },
+      ],
+      direction: 'right',
+      type: 'buttons',
+      x: 1.0 - 0.01,
+      xanchor: 'right',
+      y: 1.0 + 0.05,
+      yanchor: 'bottom',
+      showactive: false
+    }
+  ]
+
   // Create subplot for candlestick chart
   var fig = {
     data: [candlestickData, frozenData, volumeData ],
     layout: {
-      template: 'plotly_dark',
       title: 'NCN / BRL',
       separators: ',.',
       showlegend: false,
+      updatemenus: updatemenus,
       grid: {rows: 3, columns: 1},
       pattern: 'independent',
       roworder:'bottom to top',
@@ -124,7 +153,6 @@ const plot1 = (df, htmlId) => {
             }],
           visible: true
         },
-        //fixedrange: true,
         rangeslider: { visible: false },
         type: 'date',
         title: 'Datetime'
