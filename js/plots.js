@@ -219,9 +219,20 @@ const plot2 = async (df, htmlId) => {
   }
 
   const layout = {
-    title: "Frozen",
     showlegend: false,
     height: 650,
+    annotations: [{
+      x: 0.0 + 0.05,
+      y: 1.0 - 0.1,
+      font: { size: 20 },
+      opacity: 0.5,
+      showarrow:false,
+      xanchor: 'left',
+      yanchor: 'bottom',
+      xref: 'paper',
+      yref: 'paper',
+      text : 'Frozen (% / NCN)',
+    }],
     xaxis: {
       title: "Date",
     },

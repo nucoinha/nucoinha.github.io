@@ -43,3 +43,35 @@ const getCookie = (name) => {
   }
   return null;
 }
+
+const copyAddress = (htmlId) => {
+  // Get the text content of the Ethereum address span
+  var addressText = document.getElementById(`${htmlId}Address`).innerText;
+
+  // Create a temporary input element
+  var tempInput = document.createElement("input");
+
+  // Set the input value to the Ethereum address text
+  tempInput.value = addressText;
+
+  // Append the input element to the document body
+  document.body.appendChild(tempInput);
+
+  // Select the input field's content
+  tempInput.select();
+  tempInput.setSelectionRange(0, 99999); /* For mobile devices */
+
+  // Copy the selected content
+  document.execCommand("copy");
+
+  // Remove the temporary input element
+  document.body.removeChild(tempInput);
+
+  var copyButton = document.getElementById(`${htmlId}CopyButton`);
+  copyButton.innerHTML = '<i class="fas fa-check"></i> Copied!';
+  copyButton.style.color = '#00ff00';
+  setTimeout(() => {
+    copyButton.innerHTML = '<i class="fas fa-copy"></i>';
+  }, 1000)
+}
+
