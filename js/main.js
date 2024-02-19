@@ -166,8 +166,7 @@ const bindPlot = (plotId, boundPlotId) => {
   const applyToAll = (eventData) => {
     if (!eventData) return
     if (eventData['xaxis.autorange'] === true) {
-      // Get the new x-axis range
-      plot.saveX  = [
+      plot.saveX = [
         plot.layout.xaxis.range[0],
         plot.layout.xaxis.range[1],
       ];
@@ -175,22 +174,11 @@ const bindPlot = (plotId, boundPlotId) => {
         plot.layout.yaxis.range[0],
         plot.layout.yaxis.range[1],
       ];
+      Plotly.relayout(plotId, {
+        'yaxis.autorange': true
+      });
       Plotly.relayout(boundPlotId, {
         'xaxis.autorange': true
-      });
-    }
-
-    if (eventData['yaxis.autorange'] === true) {
-      plot.saveX  = [
-        plot.layout.xaxis.range[0],
-        plot.layout.xaxis.range[1],
-      ];
-      plot.saveY = [
-        plot.layout.yaxis.range[0],
-        plot.layout.yaxis.range[1],
-      ];
-      Plotly.relayout(boundPlotId, {
-        'yaxis.autorange': true
       });
     }
 
