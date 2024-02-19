@@ -173,7 +173,6 @@ const plot1 = (df, htmlId) => {
         },
         rangeslider: { visible: false },
         type: 'date',
-        title: 'Datetime'
       },
     },
   };
@@ -234,17 +233,18 @@ const plot2 = async (df, htmlId) => {
       text : 'Frozen (% / NCN)',
     }],
     xaxis: {
-      title: "Date",
     },
     yaxis: {
       title: "Frozen (%)",
       range: [pctYMin, pctYMax],
+      domain: [0.1, 1.0],
       side: 'left'
     },
     yaxis2: {
       title: "Frozen (NCN)",
       overlaying: 'y',
       range: [absYMin, absYMax],
+      domain: [0.1, 1.0],
       side: 'right'
     }
   };
