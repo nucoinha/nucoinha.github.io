@@ -166,6 +166,12 @@ const bindPlot = (plotId, boundPlotId) => {
   const applyToAll = (eventData) => {
     if (!eventData) return
     if (eventData['xaxis.autorange'] === true) {
+      Plotly.relayout(plotId, {
+        'yaxis.autorange': true
+      });
+      Plotly.relayout(boundPlotId, {
+        'xaxis.autorange': true
+      });
       plot.saveX = [
         plot.layout.xaxis.range[0],
         plot.layout.xaxis.range[1],
@@ -175,10 +181,7 @@ const bindPlot = (plotId, boundPlotId) => {
         plot.layout.yaxis.range[1],
       ];
       Plotly.relayout(plotId, {
-        'yaxis.autorange': true
-      });
-      Plotly.relayout(boundPlotId, {
-        'xaxis.autorange': true
+        'yaxis.autorange': false 
       });
     }
 
@@ -203,13 +206,22 @@ const bindPlot = (plotId, boundPlotId) => {
     if (eventData.length > 0) {
       let chartType = eventData[0].type
       if (Array.from(['candlestick','line','scatter']).includes(chartType)) {
-        if (!plot.saveX && !plot.saveY) return
-        Plotly.relayout(plotId, {
-          'xaxis.range[0]': plot.saveX[0],
-          'xaxis.range[1]': plot.saveX[1],
-          'yaxis.range[0]': plot.saveY[0],
-          'yaxis.range[1]': plot.saveY[1]
-        });
+        if (plot.saveX && plot.saveY) {
+          Plotly.relayout(plotId, {
+            'xaxis.range[0]': plot.saveX[0],
+            'xaxis.range[1]': plot.saveX[1],
+            'yaxis.range[0]': plot.saveY[0],
+            'yaxis.range[1]': plot.saveY[1],
+          });
+        }
+        plot.saveX = [
+          plot.layout.xaxis.range[0],
+          plot.layout.xaxis.range[1],
+        ];
+        plot.saveY = [
+          plot.layout.yaxis.range[0],
+          plot.layout.yaxis.range[1],
+        ];
       }
     }
   };
