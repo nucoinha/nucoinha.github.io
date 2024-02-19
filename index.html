@@ -11,9 +11,9 @@
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-PR6JZSEC7J"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
+function gtag(){dataLayer.push(arguments);}
+gtag('js', new Date());
+gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
     </script>
 
 
@@ -54,59 +54,61 @@
 
     <script>
 
-    const updateChart = () => {
-      const urlParams = getURLParams()
-      const gistIdInput = document.getElementById('gistId')
-      const getCSVButton = document.getElementById('dataSrc')
-      const lastUpdateLabel = document.getElementById('lastUpdate')
+      const updateChart = () => {
+        const urlParams = getURLParams()
+        const gistIdInput = document.getElementById('gistId')
+        const getCSVButton = document.getElementById('dataSrc')
+        const lastUpdateLabel = document.getElementById('lastUpdate')
 
-      const gistId = gistIdInput.value ? gistIdInput.value
-                   : urlParams.gistId ? urlParams.gistId : null
-      if (!gistId) return
+        const gistId = gistIdInput.value ? gistIdInput.value
+          : urlParams.gistId ? urlParams.gistId : null
+        if (!gistId) return
 
-      if (!urlParams.gistId || urlParams.gistId !== gistId) setURLParam('gistId',gistId)
-      if (!gistIdInput.value || gistIdInput.value !== gistId) gistIdInput.value = gistId
+        if (!urlParams.gistId || urlParams.gistId !== gistId) setURLParam('gistId',gistId)
+        if (!gistIdInput.value || gistIdInput.value !== gistId) gistIdInput.value = gistId
 
-      const dataUrl = dataPath(gistId)
-      getCSVButton.href = downloadCSVUrl(gistId)
+        const dataUrl = dataPath(gistId)
+        getCSVButton.href = downloadCSVUrl(gistId)
 
-      dfd.readCSV(dataUrl).then(async (df) => {
-        df = await parseDataFrame(df)
-        lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
-        plot1(df,'plot')
-        plot2(df,'plot2')
-	bindPlot('plot','plot2')
-        setInitialMode();
-      });
-    };
-
-    updateChart();
-
-    var currentTime = new Date().getTime();
-    var initialDelay = (12 * 60 * 1000) - (currentTime % (15 * 60 * 1000));
-
-    // Update the chart after an initial delay of 12 minutes
-    setTimeout(function() {
-      // Update the chart every 15 minutes after the initial delay
-      setInterval(updateChart, 15 * 60 * 1000); // 15 minutes in milliseconds
-
-      // Initial update of the chart
+        dfd.readCSV(dataUrl).then(async (df) => {
+          df = await parseDataFrame(df)
+          lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
+          plot1(df,'plot')
+          plot2(df,'plot2')
+          bindPlot('plot','plot2')
+          setInitialMode();
+        });
+        console.log('Chart updated!')
+      };
       updateChart();
-    }, initialDelay);
+      console.log('Chart first updated!')
+      let nowMinutes = new Date().getMinutes();
+
+      let initialDelays = Array.from([12, 27, 42, 57])
+                               .map(serverMin => serverMin - nowMinutes)
+                               .filter((x) => x>0)
+      console.log(`Initial delays: ${initialDelays}`)
+      let initialMinutesDelay = Math.min(...initialDelays)
+      console.log(`picked delay: ${initialMinutesDelay}`)
+      setTimeout(() => {
+        updateChart();
+        console.log('Chart updated after timeout!')
+        setInterval(updateChart, 15 * 60 * 1000);
+      }, initialMinutesDelay * 60 * 1000 + 20 * 1000);
     </script>
 
     <script>
-    let prevScrollpos = window.pageYOffset;
-    window.onscroll = function() {
-      let currentScrollPos = window.pageYOffset;
-      if (prevScrollpos > currentScrollPos) {
-        document.getElementById("navbar").classList.remove("hide");
-      } else {
-        document.getElementById("navbar").classList.add("hide");
-      }
-      prevScrollpos = currentScrollPos;
-    }
-  </script>
+      let prevScrollpos = window.pageYOffset;
+      window.onscroll = () => {
+        let currentScrollPos = window.pageYOffset;
+        if (prevScrollpos > currentScrollPos) {
+          document.getElementById("navbar").classList.remove("hide");
+        } else {
+          document.getElementById("navbar").classList.add("hide");
+        }
+        prevScrollpos = currentScrollPos;
+      };
+    </script>
 
   </body>
 </html>
