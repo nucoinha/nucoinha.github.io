@@ -98,9 +98,9 @@ const plot1 = (df, htmlId) => {
       ],
       direction: 'right',
       type: 'buttons',
-      x: 1.0 - 0.01,
-      xanchor: 'right',
-      y: 1.0 + 0.05,
+      x: 0.0 - 0.05,
+      xanchor: 'left',
+      y: 1.0 + 0.1,
       yanchor: 'bottom',
       showactive: false
     }
@@ -110,10 +110,21 @@ const plot1 = (df, htmlId) => {
   var fig = {
     data: [candlestickData, frozenData, volumeData ],
     layout: {
-      title: 'NCN / BRL',
       separators: ',.',
       showlegend: false,
       updatemenus: updatemenus,
+      annotations: [{
+        x: 0.0 + 0.05,
+        y: 1.0 - 0.1,
+        font: { size: 20 },
+        opacity: 0.5,
+        showarrow:false,
+        xanchor: 'left',
+        yanchor: 'bottom',
+        xref: 'paper',
+        yref: 'paper',
+        text: 'NCN / BRL',
+      }],
       grid: {rows: 3, columns: 1},
       pattern: 'independent',
       roworder:'bottom to top',
