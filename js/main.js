@@ -166,9 +166,31 @@ const bindPlot = (plotId, boundPlotId) => {
   const applyToAll = (eventData) => {
     if (!eventData) return
     if (eventData['xaxis.autorange'] === true) {
-      // Update the x-axis range of plot2 to auto-range
+      // Get the new x-axis range
+      plot.saveX  = [
+        plot.layout.xaxis.range[0],
+        plot.layout.xaxis.range[1],
+      ];
+      plot.saveY = [
+        plot.layout.yaxis.range[0],
+        plot.layout.yaxis.range[1],
+      ];
       Plotly.relayout(boundPlotId, {
         'xaxis.autorange': true
+      });
+    }
+
+    if (eventData['yaxis.autorange'] === true) {
+      plot.saveX  = [
+        plot.layout.xaxis.range[0],
+        plot.layout.xaxis.range[1],
+      ];
+      plot.saveY = [
+        plot.layout.yaxis.range[0],
+        plot.layout.yaxis.range[1],
+      ];
+      Plotly.relayout(boundPlotId, {
+        'yaxis.autorange': true
       });
     }
 
