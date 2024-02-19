@@ -1,3 +1,10 @@
+const config = {
+  responsive: true,
+  scrollZoom: true,
+  displayModeBar: false,
+  displaylogo: false
+}
+
 const getCandlestickData = (df) => {
   // For line graph if there's no close price use avg column
   const prices = df['close'].values.map(
@@ -74,7 +81,6 @@ const plot1 = (df, htmlId) => {
     yaxis: 'y3',
   })
 
-
   var updatemenus = [
     {
       buttons: [
@@ -86,6 +92,7 @@ const plot1 = (df, htmlId) => {
         {
           args: ['type', 'candlestick',[0]],
           label: 'Candles',
+          //icon: Plotly.Icons['candle-chart'],
           method: 'restyle'
         },
       ],
@@ -161,7 +168,7 @@ const plot1 = (df, htmlId) => {
   };
 
   // Plot the chart
-  Plotly.newPlot(htmlId, fig.data, fig.layout, {responsive: true});
+  Plotly.newPlot(htmlId, fig.data, fig.layout, config);
 }
 
 const plot2 = async (df, htmlId) => {
@@ -221,8 +228,8 @@ const plot2 = async (df, htmlId) => {
   };
 
   var data = [absTrace, pctTrace]
-  
-  Plotly.newPlot(htmlId, data, layout, {responsive: true});
+
+  Plotly.newPlot(htmlId, data, layout, config);
 }
 
 const plot3 = (df, htmlId) => {
@@ -235,7 +242,7 @@ const plot3 = (df, htmlId) => {
     xlabel:'Date',
     ylabel:'%'
   })
-  Plotly.newPlot(htmlId+3, frozen.data, frozen.layout);
+  Plotly.newPlot(htmlId+3, frozen.data, frozen.layout, config);
   let supply = plotPctChange({
     df: df,
     columnName:'circulationSupply',
@@ -245,7 +252,7 @@ const plot3 = (df, htmlId) => {
     xlabel:'Date',
     ylabel:'%'
   })
-  Plotly.newPlot(htmlId+4, supply.data, supply.layout);
+  Plotly.newPlot(htmlId+4, supply.data, supply.layout, config);
 }
 
 const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
@@ -300,7 +307,7 @@ const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
     xaxis: 'x',
     yaxis: 'y',
     mode: 'markers',
-    marker: negative_marker 
+    marker: negative_marker
   }
 
   const layout = {
