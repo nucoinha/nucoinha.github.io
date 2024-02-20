@@ -28,7 +28,6 @@ const getOldData = async () => {
 }
 
 const parseDataFrame = async (df) => {
-
   let datetime
 
   if (df.columns.includes('datetime')) {
@@ -80,8 +79,9 @@ const parseDataFrame = async (df) => {
 
 const applyLightMode = () => {
   var plot = document.getElementById('plot');
-  Plotly.relayout('plot', lightLayout); // Switch to dark mode layout
-  Plotly.relayout('plot2', lightLayout); // Switch to dark mode layout
+  Plotly.relayout('plot', lightLayout);
+  Plotly.relayout('plot2', lightLayout);
+  Plotly.relayout('plot3', lightLayout);
   const frozenBars = plot.data[1]
   const frozenColorUp   = lightLayout.template.colors.frozen
   const frozenColorDown = lightLayout.template.colors.melting
@@ -111,8 +111,9 @@ const applyLightMode = () => {
 
 const applyDarkMode = () => {
   var plot = document.getElementById('plot');
-  Plotly.relayout('plot', darkLayout); // Switch to dark mode layout
-  Plotly.relayout('plot2', darkLayout); // Switch to dark mode layout
+  Plotly.relayout('plot', darkLayout);
+  Plotly.relayout('plot2', darkLayout);
+  Plotly.relayout('plot3', darkLayout);
   const frozenBars = plot.data[1]
   const frozenColorUp   = darkLayout.template.colors.frozen
   const frozenColorDown = darkLayout.template.colors.melting

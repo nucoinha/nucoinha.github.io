@@ -56,12 +56,6 @@ const getFrozenData = (df) => {
   }
 }
 
-const updateData = (obj, newdata) => {
-  return Object.keys(newdata).forEach(key => {
-    obj[key] = newdata[key];
-  });
-}
-
 const plot1 = (df, htmlId) => {
   var candlestickData = getCandlestickData(df)
   updateData(candlestickData, {
@@ -254,7 +248,35 @@ const plot2 = async (df, htmlId) => {
   Plotly.newPlot(htmlId, data, layout, config);
 }
 
+
 const plot3 = (df, htmlId) => {
+  let heatmapData = generateHeatmapData(df)
+
+  let data = [{
+    x: heatmapData.x.map(toHumanReadable),
+    y: heatmapData.y.map(toHumanReadable),
+    z: heatmapData.z,
+    type: 'heatmap',
+    colorscale: 'Picnic',
+    hoverongaps: false,
+    colorbar: {
+      orientation: "h",
+    }
+  }]
+  let layout = {
+    title: 'Correlation Map',
+    aspectmode: 'data',
+    height: 650,
+  }
+  // DEBUG:
+  //let newdf = new dfd.DataFrame(heatmapData.z,
+  //                              {columns: heatmapData.x,
+  //                                 index: heatmapData.y})
+  //newdf.print()
+  Plotly.newPlot('plot3', data, layout, config);
+}
+
+const plot4 = (df, htmlId) => {
   let frozen = plotPctChange({
     df: df,
     columnName:'totalFrozen',
@@ -338,3 +360,31 @@ const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
   var data = [ data_up, data_dw ]
   return { data: data, layout: layout }
 }
+
+const updateChart = () => {
+  const urlParams = getURLParams()
+  const gistIdInput = document.getElementById('gistId')
+  const getCSVButton = document.getElementById('dataSrc')
+  const lastUpdateLabel = document.getElementById('lastUpdate')
+
+  const gistId = gistIdInput.value ? gistIdInput.value
+    : urlParams.gistId ? urlParams.gistId : null
+  if (!gistId) return
+
+  if (!urlParams.gistId || urlParams.gistId !== gistId) setURLParam('gistId',gistId)
+  if (!gistIdInput.value || gistIdInput.value !== gistId) gistIdInput.value = gistId
+
+  const dataUrl = dataPath(gistId)
+  getCSVButton.href = downloadCSVUrl(gistId)
+
+  dfd.readCSV(dataUrl).then(async (df) => {
+    df = await parseDataFrame(df)
+    lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
+    plot1(df,'plot')
+    plot2(df,'plot2')
+    plot3(df,'plot3')
+    bindPlot('plot','plot2')
+    setInitialMode();
+  });
+  console.log('Chart updated!')
+};

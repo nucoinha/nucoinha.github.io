@@ -7,6 +7,12 @@ const isURL = (str) => {
   }
 }
 
+const updateData = (obj, newdata) => {
+  return Object.keys(newdata).forEach(key => {
+    obj[key] = newdata[key];
+  });
+}
+
 // Lambda function to get URL parameters
 const getURLParams = () => Object.fromEntries(new URLSearchParams(window.location.search));
 
@@ -75,3 +81,12 @@ const copyAddress = (htmlId) => {
   }, 1000)
 }
 
+const toHumanReadable = (name) => {
+    var words = name.match(/[A-Za-z][a-z]*/g) || [];
+
+    return words.map(capitalize).join(" ");
+}
+
+const capitalize = (word) => {
+    return word.charAt(0).toUpperCase() + word.substring(1);
+}
