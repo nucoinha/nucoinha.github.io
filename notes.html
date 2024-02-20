@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="./js/utils.js"></script>
+  <title>Finance Concepts</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: var(--background-color);
+      color: var(--text-color);
+      transition: background-color 0.3s ease;
+      position: relative;
+    }
+
+    .light-theme {
+      --background-color: #f5f0f0;
+      --text-color: #333;
+    }
+
+    .dark-theme {
+      --background-color: #211a1a;
+      --text-color: #f3f3f3;
+    }
+
+    .container {
+      position: relative;
+      padding: 0px 50px;
+      max-width: 800px;
+      margin: 100px auto;
+      text-align: left;
+    }
+
+    .toc {
+	    background-color: inherit;
+	    padding: 10px;
+	    border-radius: 5px;
+    }
+    .toc ul {
+	    list-style-type: none;
+	    padding: 0;
+    }
+    .toc li {
+	    margin-bottom: 5px;
+    }
+    .toc a {
+	    text-decoration: none;
+	    color: var(--text-color);
+    }
+    .toc a:hover {
+	    text-decoration: underline;
+    }
+
+    #backButton {
+      position: absolute;
+      top: -40px; 
+      left: 30px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .theme-toggle {
+      position: absolute;
+      top:  -40px; 
+      right: 30px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: inherit;
+      cursor: pointer;
+    }
+
+    .go-up {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: none;
+      border: none;
+      font-size: 24px;
+      color: inherit;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .go-up.hidden {
+      display: none;
+    }
+
+
+
+
+  </style>
+</head>
+<body class="light-theme">
+  <div class="container">
+    <h1>Understanding Finance Concepts</h1>
+    <div class="toc">
+      <h2>Table of Contents</h2>
+      <ul>
+        <li><a href="#section1">Section 1</a></li>
+        <li><a href="#section2">Section 2</a></li>
+        <li><a href="#section3">Section 3</a></li>
+      </ul>
+    </div>
+    <p>Welcome to our website where we discuss various concepts related to finance and Nucoin.</p>
+    <h2 id="section1">Volume in Finance</h2>
+    <p>Volume refers to the number of shares or contracts traded in a security or an entire market during a given period of time.</p>
+    <h2 id="section2">What is a Candle Bar?</h2>
+    <p>A candlestick chart is a type of financial chart that shows the price movement of a security, derivative, or currency. Each "candlestick" typically represents one day's worth of price data.</p>
+    <h2 id="section3">Color Representations</h2>
+    <p>In financial charts, colors are often used to represent different aspects such as price movement, volume, and trends. Green typically represents upward movement, while red represents downward movement.</p>
+    <h2 id="section4">Frozen and Melting in Nucoin</h2>
+    <p>In the context of Nucoin, "frozen" refers to the process of locking Nucoins for a certain period, while "melting" refers to unlocking them after the specified period has passed.</p>
+  </div>
+
+  <button class="theme-toggle" onclick="toggleTheme()">
+     <i class="fas fa-lightbulb"></i> 
+  </button>
+
+  <button onclick="goBack()" id="backButton">
+     <i class="fas fa-arrow-left"></i>
+  </button>
+
+  <a href="#" class="go-up" onclick="scrollToTop()">
+    <i class="fas fa-arrow-up"></i>
+  </a>
+
+  <script>
+  function goBack() {
+    window.history.back();
+  }
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  window.onload = function() {
+    var goUpButton = document.querySelector('.go-up');
+    if (document.body.scrollHeight <= window.innerHeight) {
+      goUpButton.style.display = 'none';
+    }
+  };
+
+  function toggleTheme() {
+    const mode = getCookie('mode');
+    const body = document.body;
+    body.classList.toggle('dark-theme');
+    setCookie('mode', mode === 'dark'? 'light' : 'dark');
+  }
+
+  const setInitialMode = () => {
+    const mode = getCookie('mode');
+    const body = document.body;
+    if (mode === 'dark') {
+      body.classList.toggle('dark-theme');
+      return;
+    }
+  }
+
+  setInitialMode()
+</script>
+
+</body>
+</html>
+
