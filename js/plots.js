@@ -250,6 +250,9 @@ const plot2 = async (df, htmlId) => {
 
 
 const plot3 = (df, htmlId) => {
+  const plotDiv = document.getElementById(htmlId)
+  // Avoid recalculate every update!
+  if (plotDiv.data) return;
   let heatmapData = generateHeatmapData(df)
 
   let data = [{
