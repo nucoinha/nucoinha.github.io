@@ -115,3 +115,60 @@ const generateHeatmapData = (df) => {
           y: dummies.$columns,
           z: z}
 }
+
+const cotangent = (argument) => {
+  return Math.cos(argument) / Math.sin(argument)
+}
+
+const uniformRandom = () => Math.random() * 2 - 1;
+
+const coinFlip = () => uniformRandom() > 0 ? true : false
+
+const gaussianRandom = (mean, stdev) => {
+  const u = 1 - Math.random();
+  const v = Math.random();
+  const z = Math.sqrt(-2.0 * Math.log( u ) )
+          * Math.cos(2.0 * Math.PI * v );
+  return z * stdev + mean;
+}
+
+const wienerProcess = (dt) => Math.sqrt(dt) * gaussianRandom(0,1);
+
+// Limited [0, 1]
+const wienerUnitBounded = (Wt, dt) => {
+  return Math.PI
+    * cotangent(Math.PI * Wt)
+    * dt
+}
+
+// Limited [a, b]
+const wienerBounded = (Wt, dt, a, b) => {
+  return Math.PI / (b - a)
+    * cotangent(Math.PI * (Wt - a))
+    * dt
+}
+
+const ornsteinUhlenbeck = (Wt, dt, a, b, c) => {
+    return a * (b - Wt) * dt + c * wienerProcess(dt)
+}
+
+// Function to scale and translate an array
+const scaleAndTranslate = (array, scaleFactor, translation) => {
+    const process = array.map(
+      point => point * scaleFactor + translation
+    );
+    return process;
+}
+
+// Scale the values of the array to fit
+// within the new range [newMin, newMax]
+const scaleArrayValues = (array, newMin, newMax) => {
+    const min = Math.min(...array);
+    const max = Math.max(...array);
+    const scaledArray = array.map(value => {
+        return ((value - min) / (max - min))
+              * (newMax - newMin) + newMin;
+    });
+
+    return scaledArray;
+}
