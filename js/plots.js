@@ -40,9 +40,22 @@ const getVolumeData = (df) => {
 }
 
 const getFrozenData = (df) => {
+  const baddata = [
+    "2024-02-21T08:57:13.000Z",
+    "2024-02-21T12:42:13.136Z"
+  ]
+
   const frozenDiff = [0, ...diff(df['totalFrozen'].values)]
   const frozenMask = frozenDiff.map((value, index) => { return value > 0 });
   const frozenColor = frozenMask.map((value, index) => { return value ? "blue" : "red" });
+
+  df.index.map((val,index) => {
+    baddata.forEach(data => {
+      if (val == data) {
+        frozenDiff[index] = null
+      }
+    })
+  })
 
   return {
     x: df.index,
