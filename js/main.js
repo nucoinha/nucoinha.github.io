@@ -94,19 +94,6 @@ const applyLightMode = () => {
   const volumeMask      = volumeBars.marker.mask
   const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
   Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
-
-  var fab = document.getElementById('fab');
-  var lamp = document.getElementById('lightbulb');
-  var navbar = document.getElementById('navbar');
-  fab.style['background-color'] = lightLayout.template.colors.navbarColor
-  lamp.style['color'] = darkLayout.template.colors.textColor
-  navbar.style['background-color'] = lightLayout.template.colors.navbarColor;
-  var getCSVButton = document.getElementById('dataSrc')
-  var loadButton = document.getElementById('loadButton')
-  Array.from([getCSVButton, loadButton]).forEach(button => {
-    button.style['background-color'] = lightLayout.template.colors.buttonsColor;
-    button.style['color']            = lightLayout.template.colors.textColor;
-  })
 }
 
 const applyDarkMode = () => {
@@ -126,39 +113,32 @@ const applyDarkMode = () => {
   const volumeMask      = volumeBars.marker.mask
   const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
   Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
-
-  var fab = document.getElementById('fab');
-  var lamp = document.getElementById('lightbulb');
-  var navbar = document.getElementById('navbar');
-  fab.style['background-color']    = darkLayout.template.colors.navbarColor
-  lamp.style['color']              = lightLayout.template.colors.textColor
-  navbar.style['background-color'] = darkLayout.template.colors.navbarColor;
-  var getCSVButton = document.getElementById('dataSrc')
-  var loadButton = document.getElementById('loadButton')
-  Array.from([getCSVButton, loadButton]).forEach(button => {
-    button.style['background-color'] = darkLayout.template.colors.buttonsColor;
-    button.style['color']            = darkLayout.template.colors.textColor;
-  })
 }
 
 // Function to set the initial mode based on the cookie value
 const setInitialMode = () => {
-  var mode = getCookie('mode');
+  const mode = getCookie('mode');
+  const body = document.body;
   if (mode === 'dark') {
+    body.classList.add('dark-theme');
     applyDarkMode()
     return;
   }
+  body.classList.remove('dark-theme');
   applyLightMode()
 }
 
 const toggleMode = () => {
+  const body = document.body;
+  body.classList.toggle('dark-theme');
+
   var isDarkMode = getCookie('mode') === 'dark';
   if (isDarkMode) {
     applyLightMode()
-    setCookie('mode', 'light', 30);      // Save mode preference in cookie
+    setCookie('mode', 'light', 30);
   } else {
     applyDarkMode()
-    setCookie('mode', 'dark', 30);       // Save mode preference in cookie
+    setCookie('mode', 'dark', 30);
   }
 }
 

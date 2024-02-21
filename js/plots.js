@@ -136,7 +136,6 @@ const plot1 = (df, htmlId) => {
       pattern: 'independent',
       roworder:'bottom to top',
       subplots:[['xy'], ['xy2'], ['xy3']],
-      height: '600',
       yaxis:  {domain: [0.42, 1.0], title: 'Price<br>(R$)', separators: ',.'},
       yaxis2: {domain: [0.22, 0.4], title: 'Volume<br>(R$)'},
       yaxis3: {domain: [0.00, 0.2], title: 'Frozen<br>(NCN)'},
@@ -226,7 +225,6 @@ const plot2 = async (df, htmlId) => {
 
   const layout = {
     showlegend: false,
-    height: 650,
     annotations: [{
       x: 0.0 + 0.05,
       y: 1.0 - 0.1,
@@ -273,7 +271,7 @@ const plot3 = (df, htmlId) => {
     y: heatmapData.y.map(toHumanReadable),
     z: heatmapData.z,
     type: 'heatmap',
-    colorscale: 'Picnic',
+    colorscale: rdylgnColors, // js/themes.js
     hoverongaps: false,
     colorbar: {
       orientation: "h",
@@ -282,7 +280,8 @@ const plot3 = (df, htmlId) => {
   let layout = {
     title: 'Correlation Map',
     aspectmode: 'data',
-    height: 650,
+    xaxis: { fixedrange: true },
+    yaxis: { fixedrange: true },
   }
   // DEBUG:
   //let newdf = new dfd.DataFrame(heatmapData.z,

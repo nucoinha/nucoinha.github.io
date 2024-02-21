@@ -26,65 +26,56 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
     <script src="./js/math.js"></script>
     <script src="./js/main.js"></script>
     <script src="./js/plots.js"></script>
+    <link rel="stylesheet" href="./css/vars.css">
     <link rel="stylesheet" href="./css/styles.css">
 
   </head>
-  <body>
+  <body class="light-theme">
+    <div class="navbar" id="navbar">
+      <a class="warning" id="lastUpdate"></a>
+      <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
+      <button class="btn" id="loadButton" onclick="updateChart()">Load Data</button>
+      <a class="btn" target="_blank" id="dataSrc">Get CSV</a>
+    </div>
+
     <div class="content">
-      <div class="navbar" id="navbar">
-        <div>
-          <a class="warning" id="lastUpdate"></a>
-          <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
-        </div>
-        <div>
-          <button class="btn" id="loadButton" onclick="updateChart()">Load Data</button>
-          <a class="btn" target="_blank" id="dataSrc">Get CSV</a>
-        </div>
-      </div>
-
-
       <!-- Plot sequence -->
       <div class="plot" id="plot"></div>
       <div class="plot" id="plot2"></div>
       <div class="plot" id="plot3"></div>
+    </div>
+    <!-- Container for FABs -->
+    <div class="fab-container">
+      <!-- FAB for plot -->
+      <div class="fab" id="fab-plot">
+        <a href="#plot">
+          <i class="fas fa-chart-line"></i>
+        </a>
+      </div>
 
-      <!-- Container for FABs -->
-      <div class="fab-container">
-        <!-- FAB for plot -->
-        <div class="fab" id="fab-plot">
-          <a href="#plot">
-            <i class="fas fa-chart-line"></i>
-          </a>
-        </div>
+      <!-- FAB for plot2 -->
+      <div class="fab" id="fab-plot2">
+        <a href="#plot2">
+          <i class="fas fa-snowflake"></i>
+        </a>
+      </div>
 
-        <!-- FAB for plot2 -->
-        <div class="fab" id="fab-plot2">
-          <a href="#plot2">
-            <i class="fas fa-snowflake"></i>
-          </a>
-        </div>
-
-        <!-- Gotta a light? -->
-        <div class="fab" id="fab">
-          <button onclick="toggleMode()" id="toggleButton">
-            <i class="fas fa-lightbulb lightbulb" id="lightbulb"></i>
-          </button>
-        </div>
+      <!-- Gotta a light? -->
+      <div class="fab" id="fab">
+        <button onclick="toggleMode()" id="toggleButton">
+          <i class="fas fa-lightbulb lightbulb" id="lightbulb"></i>
+        </button>
       </div>
     </div>
 
+    <div id="message" class="message">
+      <p> Are you new here? make sure read the <a href="#disclaimer"><strong><span class='highlight'>DISCLAIMER</span></strong></a></p>
+      <p> Not sure how to start? Load a dataset by <a href="?gistId=58ff8c58f93dedc7ea56f02e28bf19ef"><strong><span class='highlight'>clicking here!</span></strong></a></p>
+      <p> Are you looking for the <a href="./old/index.html" target="_blank"><strong class='highlight'>old site?</strong></a></p>
+      </br>
+      <p> Maybe you want the <a href="?gistId=dcb615b33dacb288aeec8e8bb1ab40d9"><strong><span class='highlight'>Daily</span></strong></a> dataset.</p>
     </div>
-
     <footer class="footer">
-      <h3> Not sure how to start? Load a dataset by <a href="?gistId=58ff8c58f93dedc7ea56f02e28bf19ef"><strong><span style='color: yellow'>clicking here!</span></strong></a></h3>
-      </br>
-      <h3> Are you looking for the <a href="./old/index.html" target="_blank"><strong style='color: yellow'>old site?</strong></a></h3>
-      </br>
-      <h3> Maybe you want the <a href="?gistId=dcb615b33dacb288aeec8e8bb1ab40d9"><strong><span style='color: yellow'>Daily</span></strong></a> dataset.</h3>
-      </br>
-      </br>
-      </br>
-      </br>
       <p>&copy; 2024 Nucoinha Explorer by Sashota Nakamota
       <span>&#x1F3F3;&#xFE0F;&#x200D;&#x26A7;&#xFE0F;&#x200D;&#x1F308;&#xFE0F;</span>
       </p>
@@ -141,7 +132,7 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
       </div>
       <br>
       <span>
-        <h4>Disclaimer: </h4>
+        <h4 id="disclaimer">Disclaimer: </h4>
         <small class="disclaimer">
           The content provided on this website is for informational purposes only and may not always be accurate or up to date. While we strive to provide reliable and timely information, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the content for any purpose.
           Any reliance you place on such information is strictly at your own risk. We shall not be liable for any losses or damages incurred in connection with the use of this website. This includes, but is not limited to, direct, indirect, consequential, or incidental damages arising out of the use or inability to use the content provided on this site.

@@ -1,0 +1,28 @@
+* {
+  --font-family: 'Roboto', sans-serif; /* Material Design font */
+}
+
+.light-theme {
+  --navbar-color: #ffdad9;
+  --background-color: #f5f0f0;
+  --text-color: #333;
+  --text-highlight: #73cee7;
+  --button-text-color: #f3f3f3;
+  --button-color: #73cee7;
+  --button-color-hover: #73cee7;
+  --fab-text-color: #333;
+  --fab-color: #fff
+}
+
+.dark-theme {
+  --navbar-color: #5c3f3f;
+  --background-color: #211a1a;
+  --text-color: #f3f3f3;
+  --text-highlight: yellow;
+  --button-color: #ffdad9;
+  --button-color-hover: #ffdad9;
+  --button-text-color: #333;
+  --fab-color: #ffdad9;
+  --fab-text-color: #333;
+}
+

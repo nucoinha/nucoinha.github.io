@@ -5,102 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="../js/utils.js"></script>
+  <link rel="stylesheet" href="../css/vars.css">
+  <link rel="stylesheet" href="./css/styles.css">
   <title>Finance Concepts</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      background-color: var(--background-color);
-      color: var(--text-color);
-      transition: background-color 0.3s ease;
-      position: relative;
-    }
-
-    .light-theme {
-      --background-color: #f5f0f0;
-      --text-color: #333;
-    }
-
-    .dark-theme {
-      --background-color: #211a1a;
-      --text-color: #f3f3f3;
-    }
-
-    .container {
-      position: relative;
-      padding: 0px 50px;
-      max-width: 800px;
-      margin: 100px auto;
-      text-align: left;
-    }
-
-    .toc {
-	    background-color: inherit;
-	    padding: 10px;
-	    border-radius: 5px;
-    }
-    .toc ul {
-	    list-style-type: none;
-	    padding: 0;
-    }
-    .toc li {
-	    margin-bottom: 5px;
-    }
-    .toc a {
-	    text-decoration: none;
-	    color: var(--text-color);
-    }
-    .toc a:hover {
-	    text-decoration: underline;
-    }
-
-    #backButton {
-      position: absolute;
-      top: -40px; 
-      left: 30px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: inherit;
-      cursor: pointer;
-    }
-
-    .theme-toggle {
-      position: absolute;
-      top:  -40px; 
-      right: 30px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: inherit;
-      cursor: pointer;
-    }
-
-    .go-up {
-      position: fixed;
-      bottom: 30px;
-      right: 30px;
-      background: none;
-      border: none;
-      font-size: 24px;
-      color: inherit;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .go-up.hidden {
-      display: none;
-    }
-
-
-
-
   </style>
 </head>
 <body class="light-theme">
   <div class="container">
+    <button onclick="goBack()" id="backButton">
+      <i class="fas fa-arrow-left"></i>
+    </button>
+
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <i class="fas fa-lightbulb"></i> 
+    </button>
+
     <h1>Understanding Finance Concepts</h1>
+
     <div class="toc">
       <h2>Table of Contents</h2>
       <ul>
@@ -120,15 +42,7 @@
     <p>In the context of Nucoin, "frozen" refers to the process of locking Nucoins for a certain period, while "melting" refers to unlocking them after the specified period has passed.</p>
   </div>
 
-  <button class="theme-toggle" onclick="toggleTheme()">
-     <i class="fas fa-lightbulb"></i> 
-  </button>
-
-  <button onclick="goBack()" id="backButton">
-     <i class="fas fa-arrow-left"></i>
-  </button>
-
-  <a href="#" class="go-up" onclick="scrollToTop()">
+  <a class="go-up" onclick="scrollToTop()">
     <i class="fas fa-arrow-up"></i>
   </a>
 
@@ -141,10 +55,13 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  window.onload = function() {
+  window.onscroll = () =>  {
+    let currentScrollPos = window.pageYOffset;
     var goUpButton = document.querySelector('.go-up');
-    if (document.body.scrollHeight <= window.innerHeight) {
-      goUpButton.style.display = 'none';
+    if (currentScrollPos > 0) {
+      goUpButton.classList.remove("hide");
+    } else {
+      goUpButton.classList.add("hide");
     }
   };
 

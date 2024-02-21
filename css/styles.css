@@ -5,63 +5,126 @@
   padding: 0;
 }
 
+.btn button div a {
+  height: 0;
+  width: 0;
+  padding: 0;
+  margin: 0;
+}
+
 body {
-  font-family: 'Roboto', sans-serif; /* Material Design font */
-  background-color: #ddd; /* Background color */
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  background-color: var(--background-color);
+  color: var(--text-color);
+  transition: background-color 0.3s ease;
+  position: relative;
 }
 
 .navbar {
-  background-color: #333;
+  background-color: var(--navbar-color);
   color: #fff;
   padding: 10px;
   display: flex;
-  align-items: left;
-  justify-content: center;
+  align-items: center;
+  justify-content: center; /* Ensure items are spread out */
 }
 
 .navbar.hide {
   top: -100px;
 }
 
+
 .input-field {
-  border: 0px solid #ccc;
+  border: none;
   border-radius: 4px;
   padding: 10px;
   font-size: 16px;
-  transition: border-color 0.3s ease;
+  transition: border 0.1s ease;
   width: 60vw;
 }
 
 .input-field:focus {
-  border-color: #2196F3; /* Material Design primary color */
+  border-bottom: 4px solid var(--button-color);
+  padding: 9px;
   outline: none;
+}
+
+.warning {
+  background-color: #e8e971;
+  color: #333;
+  padding: 10px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  margin-right: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  max-height: 42px;
+}
+
+/* avoids warning to hide the relevant information */
+@media (max-width: 700px) {
+  .input-field {
+    width: 31vw;
+  }
+  .warning {
+    /* ellipsis */
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: "";
+    direction: rtl;
+    width: 138px;
+    text-align: left;
+  }
+  
+  .message p {
+    padding: 5px;
+  }
 }
 
 @media (max-width: 600px) {
   .navbar {
     flex-direction: column;
-    align-items: center;
+    justify-content: space-between; /* Spread items out horizontally */
+    align-items: center; /* Center items vertically */
   }
 
   .input-field {
-    margin-bottom: 10px;
+    margin-bottom: 5px;
     border-radius: 0px 0px 4px 4px !important;
     width: 100%;
   }
 
   .btn {
-    margin-bottom: 0px;
+    width: 100%;
+    margin: 5px 10px;
   }
+
   .warning {
+    margin: 0;
+    padding: 5px 10px;
     border-radius: 4px 4px 0px 0px !important;
     width: 100%;
+    margin-top: 10px; /* Add spacing between items */
+  }
+  
+  .message {
+    flex-direction: column !important;
+  }
+  
+  .message p {
+    padding: 5px !important;
+    margin: 0px !important;
   }
 }
 
 
 .btn {
-  background-color: #73cee7; /* Material Design primary color */
-  color: white;
+  background-color: var(--button-color) !important;
+  color: var(--button-text-color) !important;
   border: none;
   border-radius: 4px;
   padding: 10px 20px;
@@ -71,32 +134,63 @@ body {
   margin-left: 10px;
   text-decoration: none;
   display: inline-flex;
-  min-width:113px;
+  height: 42px;
+  min-width: 113px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
 }
 
-a.btn, input.btn a.warning { font-size: 16px; font-family: Arial, Verdana }
+a.btn, input.btn a.warning {
+  font-size: 16px;
+  font-family: var(--font-family)
+}
 
 .btn:hover {
-  background-color: #64c9e5;
+  background-color: var(--button-color-hover);
 }
 
-.warning {
-  background-color: #e8e971;
-  color: #333;
-  padding: 5px 10px;
-  border-radius: 4px;
-  font-size: 12px;
-  min-width: 100px;
-  min-height: 10px;
-  display: inline-flex;
-  margin-right: 10px;
+.content {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
+
+.message {
+  display: flex;
+  justify-content: center;
+  flex-direction: row;
+  padding: 10vh 10vw;
+  justify-self: center;
+  text-align: left;
+}
+
+.message p {
+  padding: 30px;
+}
+
+.message .highlight {
+  color: var(--text-highlight);
+}
+
 
 .plot {
   width: 100%;
-  max-width: 100vw;
-  margin-top: 0px;
-  margin-bottom: 0px;
+  height: 100%;
+}
+
+.js-plotly-plot,
+.plot-container {
+  height: 100vh
+}
+
+.plotly .main-svg {
+  transition: background-color 0.4s ease;
+}
+
+.plotly .bg-layer {
+  transition: background-color 0.4s ease;
 }
 
 .fab-container {
@@ -108,10 +202,17 @@ a.btn, input.btn a.warning { font-size: 16px; font-family: Arial, Verdana }
   z-index: 9999;
 }
 
-.fab {
-  background-color: white;
+.lightbulb {
+  font-size: 24px;
   color: black;
+}
+
+.fab {
+  background-color: var(--fab-color);
+  color: var(--fab-text-color);
   border-radius: 50%;
+  font-size: 20px;
+  padding: 5px;
   width: 60px;
   height: 60px;
   display: flex;
@@ -119,23 +220,21 @@ a.btn, input.btn a.warning { font-size: 16px; font-family: Arial, Verdana }
   align-items: center;
   box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.25);
   margin: 5px;
-}
-
-.lightbulb {
-  font-size: 24px;
-  color: black;
-}
-
-#toggleButton {
-  background: none;
-  border: none;
-  color: white;
-  cursor: pointer;
-  font-size: 14px;
-  padding: 5px;
   transition: transform 0.2s;
 }
-#toggleButton i {
+
+.fab a {
+  text-decoration: none;
+  color: var(--fab-text-color);
+}
+
+.fab button {
+  background: none;
+  cursor: pointer;
+  border: none;
+}
+
+.fab i {
   display: flex;
   justify-content: center;
   align-items: center;
