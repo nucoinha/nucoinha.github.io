@@ -59,7 +59,6 @@ const plotCandles = (htmlId) => {
 
   const bullish = lineSegment(bullishData, a);
   const bearish = lineSegment(bearishData, a);
-  console.log(bullish);
 
   var data = [{
     type: 'candlestick',
@@ -162,15 +161,18 @@ const plotCandles = (htmlId) => {
   // Layout settings with annotations
   var layout = {
     showlegend: false,
+    zoom: false,
     margin: {
       l: 10, r: 10, b: 10, t: 10
     },
     updatemenus: updatemenus,
     xaxis: {
       visible: false,
+      fixedrange: true,
       rangeslider: { visible: false },
     },
     yaxis: {
+      fixedrange: true,
       visible: false,
     },
     annotations: [

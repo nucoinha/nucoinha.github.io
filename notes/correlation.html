@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Correlation Trends</title>
+  <!-- Add Plotly CDN -->
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="../js/utils.js"></script>
+  <script src="../js/math.js"></script>
+  <script src="./js/correlation.js"></script>
+  <link rel="stylesheet" href="../css/vars.css">
+  <style>
+    body {
+      margin:  0px;
+      padding: 0px;
+      background-color: white;
+      color: black;
+    }
+    button {
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+
+    input[type="range"] {
+      padding: 4px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+    #plot {
+      position: fixed;
+      top: 0;
+      width: 100%;
+    }
+
+    .container {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      bottom: 0;
+      padding: 20px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+  </style>
+</head>
+<body>
+
+<div id="plot"></div>
+<div class="container">
+  <label for="rho">Correlation (ρ): <span id="rhoValue">1</span></label>
+  <input type="range" min="0" max="1" step="0.01" value="1" id="rhoSlider">
+  <button onclick="updatePlot()">Replot</button>
+</div>
+
+<script>
+  const updatePlot = () => {
+    const rho = parseFloat(document.getElementById('rhoSlider').value);
+    document.getElementById('rhoValue').textContent = rho.toFixed(2);
+    // Update data with new rho value
+    const dt = 0.01
+    negative = generateCorrelatedData(0.0, -rho, dt, 0.0, 0.5);
+    positive = generateCorrelatedData(0.6, +rho, dt, 0.0, 0.5);
+    fig = getFigure(positive, negative)
+    Plotly.react('plot', fig.data, fig.layout, fig.config);
+  };
+
+  // Attach event listener to slider
+  document.getElementById('rhoSlider').addEventListener('input', updatePlot);
+
+  // Initial plot
+  updatePlot();
+</script>
+
+</body>
+</html>

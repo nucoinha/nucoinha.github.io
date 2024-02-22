@@ -13,21 +13,9 @@
     /* Basic styling for the liquidity pool simulation */
     body {
       font-family: Arial, sans-serif;
-    }
-
-    .checkbox-container {
-      display: flex;
-      flex-wrap: wrap; /* Allow wrapping if the content exceeds the width */
-    }
-
-    .checkbox-container label {
-      width: auto; /* Let the width adjust based on content */
-      margin-right: -1px; /* Adjust the margin as needed */
-    }
-
-    .checkbox-container input[type="checkbox"] {
-      width: 17px; /* Adjust the width as per your requirement */
-      margin-right: 30px;
+      margin: 0;
+      padding: 0;
+      text-align: left;
     }
 
     .container {
@@ -48,15 +36,6 @@
       border: 1px solid #ccc;
       border-radius: 3px;
       box-sizing: border-box;
-    }
-    input[type="checkbox"] {
-      width: calc(100% - 10px);
-      padding: 4px;
-      margin-bottom: 12px;
-      border: 1px solid #ccc;
-      border-radius: 3px;
-      box-sizing: border-box;
-      margin-right: 30px;
     }
     button {
       width: 100%;
@@ -94,13 +73,16 @@
   </br>
   Price: R$ <span id="price">0,10000000</span> (<span id="variation"></span>)
   </p>
-  <div class="checkbox-container">
-  <label for="useRealData">Use real data:</label>
-  <input type="checkbox" id="useRealData" onchange="updatePoolValues()">
-
-  <label for="useCurrentData">Use current values:</label>
-  <input type="checkbox" id="useCurrentData" onchange="updatePoolValues()">
+  <fieldset>
+  <div>
+    <label for="useRealData">Use real data:</label>
+    <input type="checkbox" id="useRealData" onchange="updatePoolValues(false)"/>
   </div>
+  <div>
+    <label for="useCurrentData">Use current values:</label>
+    <input type="checkbox" id="useCurrentData" onchange="updatePoolValues(true)"/>
+  </div>
+  </fieldset>
 
 </div>
 
@@ -121,9 +103,10 @@ let currentRatio = poolB / poolA;
 updatePoolStatus();
 
 // Function to update pool values based on checkbox state
-function updatePoolValues() {
+function updatePoolValues(calledFromCurrentData) {
   var useRealData    = document.getElementById('useRealData');
   var useCurrentData = document.getElementById('useCurrentData');
+  if (calledFromCurrentData && !useRealData.checked) useRealData.checked = true
   if (useRealData.checked) {
     var useInitialValues = useRealData.checked && !useCurrentData.checked;
     var useCurrentValues = useRealData.checked && useCurrentData.checked;

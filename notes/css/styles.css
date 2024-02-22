@@ -64,9 +64,9 @@ ol.main > li > ol > li:before {
 }
 
 #backButton {
-  position: absolute;
-  top: -10vh; 
-  left: 10vw;
+  position: fixed;
+  top:  10vh;
+  left: 5%;
   background: none;
   border: none;
   font-size: 24px;
@@ -75,9 +75,9 @@ ol.main > li > ol > li:before {
 }
 
 .theme-toggle {
-  position: absolute;
-  top: -10vh; 
-  right:10vw;
+  position: fixed;
+  top:  10vh;
+  right:5vw;
   background: none;
   border: none;
   font-size: 24px;
@@ -88,7 +88,7 @@ ol.main > li > ol > li:before {
 .go-up {
   position: fixed;
   bottom: 5vh;
-  left: 85vw;
+  right: 5vw;
   background: none;
   border: nonef;
   font-size: 24px;
