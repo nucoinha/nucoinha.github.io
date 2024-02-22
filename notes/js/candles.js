@@ -1,4 +1,4 @@
-const plotCandles1 = (htmlId) => {
+const plotCandles = (htmlId) => {
   const max   =  1.00;
   const big   =  0.75;
   const small =  0.25;
@@ -70,21 +70,21 @@ const plotCandles1 = (htmlId) => {
     low:   [min, min],
     increasing: {line: {color: 'green'}},  // Color for bullish candle
     decreasing: {line: {color: 'red'}},    // Color for bearish candle
-    name: 'Bullish and Bearish Candles'
+    name: ''
   }, {
     type: 'scatter',
     x: bearish.x,
     y: bearish.y,
     mode: 'lines',
     line: {color: 'blue'},
-    name: 'Price Path (Bear)'
+    name: 'Price Path'
   }, {
     type: 'scatter',
     x: bullish.x,
     y: bullish.y,
     mode: 'lines',
     line: {color: 'blue'},
-    name: 'Price Path (Bull)'
+    name: 'Price Path'
   }, {
     type: 'scatter',
     x: [-0.25, 0.25],
@@ -127,78 +127,137 @@ const plotCandles1 = (htmlId) => {
     }
   }]
 
+  const margin = 0.1;
+  const gap = 40;
+
+  var updatemenus = [
+    {
+      buttons: [
+        {
+          method: 'relayout',
+          args: ['xaxis.range', [-margin-0.25, margin+0.25]],
+          label: 'Bear'
+        },
+        {
+          method: 'relayout',
+          args: ['xaxis.range', [-margin+1-0.25, margin+1+0.25]],
+          label: 'Bull'
+        },
+        {
+          method: 'relayout',
+          args: ['xaxis.autorange', true],
+          label: 'Both'
+        },
+      ],
+      type: 'buttons',
+      direction: 'left',
+      showactive: true,
+      x: 0.5,
+      xanchor: 'center',
+      y: 1.1,
+      yanchor: 'top'
+    }
+  ]
+
   // Layout settings with annotations
   var layout = {
+    showlegend: false,
+    margin: {
+      l: 10, r: 10, b: 10, t: 10
+    },
+    updatemenus: updatemenus,
     xaxis: {
+      visible: false,
       rangeslider: { visible: false },
     },
     yaxis: {
-      visible: true,
+      visible: false,
     },
     annotations: [
-
       {
-        x: -0.25,
+        x: 1 - 0.25,
+        y: small,
+        xref: 'x',
+        yref: 'y',
+        text: 'Open', // Bull
+        showarrow: true,
+        arrowhead: 2,
+        ay: -gap,
+        ax: -gap
+      },
+      {
+        x: 1 + 0.25,
+        y: big,
+        xref: 'x',
+        yref: 'y',
+        text: 'Close', // Bull
+        showarrow: true,
+        arrowhead: 2,
+        ax: +gap,
+      },
+      {
+        x: 1 + 0.25,
         y: max,
         xref: 'x',
         yref: 'y',
-        text: 'Max (Bearish)',
+        text: 'Max', // Bull
         showarrow: true,
         arrowhead: 2,
+        ax: +gap
       },
       {
-        x: -0.25,
+        x: 1 + 0.25,
         y: min,
         xref: 'x',
         yref: 'y',
-        text: 'Min (Bearish)',
+        text: 'Min', // Bull
         showarrow: true,
         arrowhead: 2,
+        ax: +gap,
       },
       {
-        x: 1 + 0.25,
+        x: -0.25,
         y: max,
         xref: 'x',
         yref: 'y',
-        text: 'Max (Bullish)',
+        text: 'Max',
         showarrow: true,
         arrowhead: 2,
+        ax: -gap
       },
       {
-        x: 1 + 0.25,
+        x: -0.25,
         y: min,
         xref: 'x',
         yref: 'y',
         text: 'Min',
         showarrow: true,
         arrowhead: 2,
-        ax: +80,
-        font: { size: 20 }
+        ax: -gap
       },
       {
         x: -0.25,
         y: big,
         xref: 'x',
         yref: 'y',
-        text: 'Open',
+        text: 'Open', // Bear
         showarrow: true,
         arrowhead: 2,
-        ax: -80,
-        font: { size: 20 }
+        ax: -gap,
       },
       {
         x: 0.25,
         y: small,
         xref: 'x',
         yref: 'y',
-        text: 'Close',
+        text: 'Close', // Bear
         showarrow: true,
         arrowhead: 2,
-        ax: +80,
-        font: { size: 20 }
+        ay: +gap,
+        ax: +gap,
       },
     ]
   };
 
-  Plotly.newPlot(htmlId, data, layout);
+  Plotly.newPlot(htmlId, data, layout, {responsive: true, displayModeBar: false});
 }

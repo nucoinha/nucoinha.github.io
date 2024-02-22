@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
+  <script src="../js/math.js"></script>
+  <script src="../js/main.js"></script>
+  
+  <title>Liquidity Pool Simulation</title>
+  <style>
+
+    /* Basic styling for the liquidity pool simulation */
+    body {
+      font-family: Arial, sans-serif;
+    }
+
+    .checkbox-container {
+      display: flex;
+      flex-wrap: wrap; /* Allow wrapping if the content exceeds the width */
+    }
+
+    .checkbox-container label {
+      width: auto; /* Let the width adjust based on content */
+      margin-right: -1px; /* Adjust the margin as needed */
+    }
+
+    .checkbox-container input[type="checkbox"] {
+      width: 17px; /* Adjust the width as per your requirement */
+      margin-right: 30px;
+    }
+
+    .container {
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      background-color: #f9f9f9;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+    input[type="number"] {
+      width: calc(100% - 10px);
+      padding: 10px;
+      margin-bottom: 10px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+    }
+    input[type="checkbox"] {
+      width: calc(100% - 10px);
+      padding: 4px;
+      margin-bottom: 12px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      box-sizing: border-box;
+      margin-right: 30px;
+    }
+    button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      background-color: #4caf50;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #45a049;
+    }
+
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2>Liquidity Pool Simulation</h2>
+  <label for="tokenA">NCN:</label>
+  <input type="number" id="tokenA" placeholder="Insert NCN to sell">
+  <label for="tokenB">BRL:</label>
+  <input type="number" id="tokenB" placeholder="Insert BRL to buy NCN">
+
+  <button onclick="buy()">Buy NCN</button>
+  <button onclick="sell()">Sell NCN</button>
+  <p>
+  <span id="poolA">1000</span>  |  <span id="poolB">100</span>
+  </br>
+  </br>
+  K=<span id="constantK"></span>
+  </br>
+  </br>
+  Price: R$ <span id="price">0,10000000</span> (<span id="variation"></span>)
+  </p>
+  <div class="checkbox-container">
+  <label for="useRealData">Use real data:</label>
+  <input type="checkbox" id="useRealData" onchange="updatePoolValues()">
+
+  <label for="useCurrentData">Use current values:</label>
+  <input type="checkbox" id="useCurrentData" onchange="updatePoolValues()">
+  </div>
+
+</div>
+
+<script>
+
+// Format a number as currency
+const formatCurrency = (number, code) => {
+  return new Intl.NumberFormat('pt-BR', {
+    style: 'currency',
+    currency: code
+  }).format(number);
+}
+
+// Initial pool amounts
+let poolA = 1000.00;
+let poolB = 100.00;
+let currentRatio = poolB / poolA;
+updatePoolStatus();
+
+// Function to update pool values based on checkbox state
+function updatePoolValues() {
+  var useRealData    = document.getElementById('useRealData');
+  var useCurrentData = document.getElementById('useCurrentData');
+  if (useRealData.checked) {
+    var useInitialValues = useRealData.checked && !useCurrentData.checked;
+    var useCurrentValues = useRealData.checked && useCurrentData.checked;
+    if (useInitialValues) {
+      poolA = 1438220385.00; // NCN
+      poolB = 14764202.38;   // BRL
+      currentRatio = poolB / poolA
+      updatePoolStatus();
+      return
+    }
+
+    if (useCurrentValues) {
+      const dataUrl = dataPath('58ff8c58f93dedc7ea56f02e28bf19ef')
+      dfd.readCSV(dataUrl).then(async (df) => {
+        //lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
+        poolA = getLatest(df['ncnBalance'].values)
+        poolB = getLatest(df['brlBalance'].values)
+        currentRatio = poolB / poolA
+        updatePoolStatus();
+      });
+    }
+  } else {
+    useCurrentData.checked = false
+    // use example values
+    poolA = 1000;
+    poolB = 100;
+    currentRatio = poolB / poolA
+    updatePoolStatus();
+    return
+  }
+}
+
+// Function to buy NCN tokens
+function buy() {
+  let amountB = parseFloat(document.getElementById('tokenB').value);
+  if (!isNaN(amountB)) {
+    let amountA = amountB / currentRatio;
+    if (poolA - amountA >= 0) {
+      poolA -= amountA;
+      poolB += amountB;
+    }
+    updatePoolStatus();
+  }
+}
+
+// Function to sell NCN tokens
+function sell() {
+  let amountA = parseFloat(document.getElementById('tokenA').value);
+  if (!isNaN(amountA)) {
+    let amountB = amountA * currentRatio;
+    if (poolB - amountB >= 0) {
+      poolA += amountA;
+      poolB -= amountB;
+    }
+    updatePoolStatus();
+  }
+}
+
+// Function to update the pool status display
+function updatePoolStatus() {
+  let oldPrice = currentRatio 
+  let newPrice = poolB / poolA;
+  document.getElementById('price').textContent = newPrice.toFixed(8);
+  document.getElementById('poolA').textContent = formatCurrency(poolA.toFixed(2),'NCN');
+  document.getElementById('poolB').textContent = formatCurrency(poolB.toFixed(2),'BRL');
+  document.getElementById('constantK').textContent = (poolA * poolB).toFixed(2);
+
+  let variationElement = document.getElementById('variation')
+  let variation = (newPrice - oldPrice) / oldPrice * 100
+  variationElement.textContent = variation.toFixed(2) + '%';
+  variationElement.style.color = variation >= 0 ? 'green' : 'red'
+  currentRatio = newPrice
+}
+
+// Add event listener to NCN input field
+document.getElementById('tokenA').addEventListener('input', function () {
+  let amountA = parseFloat(this.value);
+  if (!isNaN(amountA)) {
+    let equivalentB = amountA * currentRatio;
+    document.getElementById('tokenB').value = equivalentB.toFixed(2);
+  } else {
+    document.getElementById('tokenB').value = '';
+  }
+});
+
+// Add event listener to BRL input field
+document.getElementById('tokenB').addEventListener('input', function () {
+  let amountB = parseFloat(this.value);
+  if (!isNaN(amountB)) {
+    let equivalentA = amountB / currentRatio;
+    document.getElementById('tokenA').value = equivalentA.toFixed(2);
+  } else {
+    document.getElementById('tokenA').value = '';
+  }
+});
+
+// Call the updatePoolValues function initially to set the pool values based on the initial checkbox state
+updatePoolValues();
+
+</script>
+
+</body>
+</html>

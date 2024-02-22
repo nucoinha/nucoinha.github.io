@@ -3,9 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- external -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+  <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
+  <!-- global to app -->
   <script src="../js/utils.js"></script>
+  <script src="../js/math.js"></script>
   <link rel="stylesheet" href="../css/vars.css">
+  <!-- local to notes -->
+  <script src="./js/candles.js"></script>
   <link rel="stylesheet" href="./css/styles.css">
   <title>Finance Concepts</title>
   <style>
@@ -22,29 +28,59 @@
     </button>
 
     <h1>Understanding Finance Concepts</h1>
+    <p>Welcome to our website where we discuss various concepts related to finance and Nucoin.</p>
 
     <div class="toc">
       <h2>Table of Contents</h2>
-      <ul>
-        <li><a href="#section1">Section 1</a></li>
+      <ol class="main">
+        <li><a href="#section1">Glossary</a></li>
+        <ol>
+          <li><a href="#LiquidityPool">Liquidity Pool (LP)</a></li>
+          <li><a href="#Volume">Volume</a></li>
+          <li><a href="#Candles">Candles</a></li>
+          <li><a href="#Frozen">Frozen</a></li>
+        </ol>
         <li><a href="#section2">Section 2</a></li>
         <li><a href="#section3">Section 3</a></li>
-      </ul>
+      </ol>
     </div>
-    <p>Welcome to our website where we discuss various concepts related to finance and Nucoin.</p>
-    <h2 id="section1">Volume in Finance</h2>
-    <p>Volume refers to the number of shares or contracts traded in a security or an entire market during a given period of time.</p>
-    <h2 id="section2">What is a Candle Bar?</h2>
-    <p>A candlestick chart is a type of financial chart that shows the price movement of a security, derivative, or currency. Each "candlestick" typically represents one day's worth of price data.</p>
-    <h2 id="section3">Color Representations</h2>
-    <p>In financial charts, colors are often used to represent different aspects such as price movement, volume, and trends. Green typically represents upward movement, while red represents downward movement.</p>
-    <h2 id="section4">Frozen and Melting in Nucoin</h2>
-    <p>In the context of Nucoin, "frozen" refers to the process of locking Nucoins for a certain period, while "melting" refers to unlocking them after the specified period has passed.</p>
+    <div class="content">
+      <ol class="main">
+        <h2 id="section1"><li>Glossary <a href="#section1">#</a></li></h2>
+        <ol>
+        <h3 id="LiquidityPool"><li>Liquidity Pool (LP) <a href="#LiquidityPool">#</a></li></h3>
+          <p>
+          In a liquidity pool (LP) with NCN (Nucoin) and BRL (Brazilian Real), the operation works based on the concept of constant product. Which means that the product of the quantities of NCN and BRL remains constant. When someone trades in the pool, they are swapping one asset for another at a price determined by the current ratio of NCN to BRL in the pool.
+          </p>
+          <iframe src="./liquidity_pool.html" width="100%" height="500px" frameborder="0"></iframe>
+        <h3 id="Volume"><li>Volume <a href="#Volume">#</a></li></h3>
+          <p>
+          Volume measures the amount that a financial asset changes hands during a given period of time.
+          </p>
+        <h3 id="Candles"><li>Candles <a href="#Candles">#</a></li></h3>
+          <p>
+          A candlestick chart is a type of financial chart that shows the price movement given a time interval.
+          Each candle represent one period of time of negociation.
+          The red one is called Bearish, meaning the price was in a downward trend. 
+          The green one is called Bullish, meaning the price was in a upward trend. 
+          <div class="plot" id="candlestick"></div>
+          </p>
+        </ol>
+          <h3 id="Frozen"><li>Frozen <a href="#Frozen">#</a></li></h3>
+          <p>
+          </p>
+        </ol>
+      </ol>
+    </div>
   </div>
 
   <a class="go-up" onclick="scrollToTop()">
     <i class="fas fa-arrow-up"></i>
   </a>
+
+  <script>
+    plotCandles('candlestick')
+  </script>
 
   <script>
   function goBack() {

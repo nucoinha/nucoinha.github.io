@@ -1,6 +1,3 @@
-const library = indicators
-const ta = new library.IndicatorsNormalized()
-
 const getLastUpdate = (df) => {
   const d = new Date(getLatest(df.index))
   return new Date(d.setHours(d.getHours() + 3)).toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'})
