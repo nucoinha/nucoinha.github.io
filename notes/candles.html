@@ -6,15 +6,27 @@
     <title>Candlestick Graph with Random Walk Line</title>
     <!-- Include Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="../js/utils.js"></script>
     <script src="../js/math.js"></script>
-    <script src="js/notes/candles.js"></script>
+    <script src="./js/candles.js"></script>
+    <style>
+    * {
+      border: 0;
+      margin: 0;
+      padding: 0;
+    }
+    #candlestick {
+      width: 100%;
+      height: 300px;
+    }
+    </style>
   </head>
   <body>
     <!-- Plotly graph container -->
     <div id="candlestick"></div>
 
     <script>
-      plotCandles1('candlestick')
+      plotCandles('candlestick')
     </script>
   </body>
 </html>
