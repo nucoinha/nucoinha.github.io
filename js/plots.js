@@ -69,7 +69,7 @@ const getFrozenData = (df) => {
   }
 }
 
-const plot1 = (df, htmlId) => {
+const plot1 = (df) => {
   var candlestickData = getCandlestickData(df)
   updateData(candlestickData, {
     xaxis: 'x',
@@ -119,6 +119,7 @@ const plot1 = (df, htmlId) => {
     layout: {
       separators: ',.',
       showlegend: false,
+      uirevision: 'true',
       updatemenus: updatemenus,
       annotations: [{
         x: 0.0 + 0.05,
@@ -182,12 +183,10 @@ const plot1 = (df, htmlId) => {
       },
     },
   };
-
-  // Plot the chart
-  Plotly.newPlot(htmlId, fig.data, fig.layout, config);
+  return fig
 }
 
-const plot2 = async (df, htmlId) => {
+const plot2 = (df) => {
   let frozen = df['totalFrozen']
   let supply = df['circulationSupply']
   let latestSupply = getLatest(supply.values)
@@ -225,6 +224,7 @@ const plot2 = async (df, htmlId) => {
 
   const layout = {
     showlegend: false,
+    uirevision: 'true',
     annotations: [{
       x: 0.0 + 0.05,
       y: 1.0 - 0.1,
@@ -254,16 +254,14 @@ const plot2 = async (df, htmlId) => {
     }
   };
 
-  var data = [absTrace, pctTrace]
-
-  Plotly.newPlot(htmlId, data, layout, config);
+  return {
+    data: [absTrace, pctTrace],
+    layout: layout
+  }
 }
 
 
-const plot3 = (df, htmlId) => {
-  const plotDiv = document.getElementById(htmlId)
-  // Avoid recalculate every update!
-  if (plotDiv.data) return;
+const plot3 = (df) => {
   let heatmapData = generateHeatmapData(df)
 
   let data = [{
@@ -280,6 +278,7 @@ const plot3 = (df, htmlId) => {
   let layout = {
     title: 'Correlation Map',
     aspectmode: 'data',
+    uirevision: 'true',
     xaxis: { fixedrange: true },
     yaxis: { fixedrange: true },
   }
@@ -288,10 +287,10 @@ const plot3 = (df, htmlId) => {
   //                              {columns: heatmapData.x,
   //                                 index: heatmapData.y})
   //newdf.print()
-  Plotly.newPlot('plot3', data, layout, config);
+  return { data: data, layout: layout }
 }
 
-const plot4 = (df, htmlId) => {
+const plot4 = (df) => {
   let frozen = plotPctChange({
     df: df,
     columnName:'totalFrozen',
@@ -301,7 +300,6 @@ const plot4 = (df, htmlId) => {
     xlabel:'Date',
     ylabel:'%'
   })
-  Plotly.newPlot(htmlId+3, frozen.data, frozen.layout, config);
   let supply = plotPctChange({
     df: df,
     columnName:'circulationSupply',
@@ -311,7 +309,6 @@ const plot4 = (df, htmlId) => {
     xlabel:'Date',
     ylabel:'%'
   })
-  Plotly.newPlot(htmlId+4, supply.data, supply.layout, config);
 }
 
 const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
@@ -370,13 +367,14 @@ const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
   }
 
   const layout = {
+    uirevision: 'true',
     shapes: generateVerticalLines(df.index, pct_change),
   };
   var data = [ data_up, data_dw ]
   return { data: data, layout: layout }
 }
 
-const updateChart = () => {
+const updateChart = (isFirstCall) => {
   const urlParams = getURLParams()
   const gistIdInput = document.getElementById('gistId')
   const getCSVButton = document.getElementById('dataSrc')
@@ -395,10 +393,19 @@ const updateChart = () => {
   dfd.readCSV(dataUrl).then(async (df) => {
     df = await parseDataFrame(df)
     lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
-    plot1(df,'plot')
-    plot2(df,'plot2')
-    plot3(df,'plot3')
-    bindPlot('plot','plot2')
+    fig1 = plot1(df)
+    fig2 = plot2(df)
+    fig3 = plot3(df)
+    if (isFirstCall) {
+      Plotly.newPlot('plot1', fig1.data, fig1.layout, config)
+      Plotly.newPlot('plot2', fig2.data, fig2.layout, config)
+      Plotly.newPlot('plot3', fig3.data, fig3.layout, config)
+      bindPlot('plot1','plot2')
+    } else {
+      Plotly.react('plot1', fig1.data, fig1.layout, config)
+      Plotly.react('plot2', fig2.data, fig2.layout, config)
+      Plotly.react('plot3', fig3.data, fig3.layout, config)
+    }
     setInitialMode();
   });
   console.log('Chart updated!')

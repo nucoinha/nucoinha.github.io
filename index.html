@@ -40,7 +40,7 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
 
     <div class="content">
       <!-- Plot sequence -->
-      <div class="plot" id="plot"></div>
+      <div class="plot" id="plot1"></div>
       <div class="plot" id="plot2"></div>
       <div class="plot" id="plot3"></div>
     </div>
@@ -48,7 +48,7 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
     <div class="fab-container">
       <!-- FAB for plot -->
       <div class="fab" id="fab-plot">
-        <a href="#plot">
+        <a href="#plot1">
           <i class="fas fa-chart-line"></i>
         </a>
       </div>
@@ -144,7 +144,7 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
     </footer>
 
     <script>
-      updateChart();
+      updateChart(true);
       console.log('Chart first updated!')
       let nowMinutes = new Date().getMinutes();
 
@@ -155,7 +155,7 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
       let initialMinutesDelay = Math.min(...initialDelays)
       console.log(`picked delay: ${initialMinutesDelay}`)
       setTimeout(() => {
-        updateChart();
+        updateChart(false);
         console.log('Chart updated after timeout!')
         setInterval(updateChart, 15 * 60 * 1000);
       }, initialMinutesDelay * 60 * 1000 + 20 * 1000);

@@ -1,4 +1,4 @@
-const plotCandles = (htmlId) => {
+const getChart = () => {
   const max   =  1.00;
   const big   =  0.75;
   const small =  0.25;
@@ -160,6 +160,7 @@ const plotCandles = (htmlId) => {
 
   // Layout settings with annotations
   var layout = {
+    uirevision: 'true',
     showlegend: false,
     zoom: false,
     margin: {
@@ -260,6 +261,5 @@ const plotCandles = (htmlId) => {
       },
     ]
   };
-
-  Plotly.newPlot(htmlId, data, layout, {responsive: true, displayModeBar: false});
+  return { data: data, layout: layout, config: {responsive: true, displayModeBar: false}};
 }

@@ -75,8 +75,8 @@ const parseDataFrame = async (df) => {
 }
 
 const applyLightMode = () => {
-  var plot = document.getElementById('plot');
-  Plotly.relayout('plot', lightLayout);
+  var plot = document.getElementById('plot1');
+  Plotly.relayout('plot1', lightLayout);
   Plotly.relayout('plot2', lightLayout);
   Plotly.relayout('plot3', lightLayout);
   const frozenBars = plot.data[1]
@@ -84,18 +84,18 @@ const applyLightMode = () => {
   const frozenColorDown = lightLayout.template.colors.melting
   const frozenMask = frozenBars.marker.mask
   const frozenColors = frozenBars.marker.mask.map(isTrue => { return isTrue ? frozenColorUp : frozenColorDown }) 
-  Plotly.restyle('plot', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
+  Plotly.restyle('plot1', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
   const volumeBars      = plot.data[2]
   const volumeColorUp   = lightLayout.template.colors.positive
   const volumeColorDown = lightLayout.template.colors.negative
   const volumeMask      = volumeBars.marker.mask
   const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
-  Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
+  Plotly.restyle('plot1', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
 }
 
 const applyDarkMode = () => {
-  var plot = document.getElementById('plot');
-  Plotly.relayout('plot', darkLayout);
+  var plot = document.getElementById('plot1');
+  Plotly.relayout('plot1', darkLayout);
   Plotly.relayout('plot2', darkLayout);
   Plotly.relayout('plot3', darkLayout);
   const frozenBars = plot.data[1]
@@ -103,13 +103,13 @@ const applyDarkMode = () => {
   const frozenColorDown = darkLayout.template.colors.melting
   const frozenMask = frozenBars.marker.mask
   const frozenColors = frozenBars.marker.mask.map(isTrue => { return isTrue ? frozenColorUp : frozenColorDown }) 
-  Plotly.restyle('plot', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
+  Plotly.restyle('plot1', { marker: { mask: frozenMask, color: frozenColors}}, [1]);
   const volumeBars = plot.data[2]
   const volumeColorUp   = darkLayout.template.colors.positive
   const volumeColorDown = darkLayout.template.colors.negative
   const volumeMask      = volumeBars.marker.mask
   const volumeColors    = volumeMask.map(isTrue => { return isTrue ? volumeColorUp : volumeColorDown }) 
-  Plotly.restyle('plot', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
+  Plotly.restyle('plot1', { marker: { mask: volumeMask, color: volumeColors}}, [2]);
 }
 
 // Function to set the initial mode based on the cookie value
