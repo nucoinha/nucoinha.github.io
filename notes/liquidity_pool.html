@@ -58,9 +58,9 @@
 <div class="container">
   <h2>Liquidity Pool Simulation</h2>
   <label for="tokenA">NCN:</label>
-  <input type="number" id="tokenA" placeholder="Insert NCN to sell">
+  <input type="number" id="tokenA" value="" placeholder="Insert NCN to sell">
   <label for="tokenB">BRL:</label>
-  <input type="number" id="tokenB" placeholder="Insert BRL to buy NCN">
+  <input type="number" id="tokenB" value="" placeholder="Insert BRL to buy NCN">
 
   <button onclick="buy()">Buy NCN</button>
   <button onclick="sell()">Sell NCN</button>
@@ -144,9 +144,11 @@ function buy() {
   let amountB = parseFloat(document.getElementById('tokenB').value);
   if (!isNaN(amountB)) {
     let amountA = amountB / currentRatio;
-    if (poolA - amountA >= 0) {
+    if (poolA - amountA > 0) {
       poolA -= amountA;
       poolB += amountB;
+    } else {
+      alert(`Cannot buy ${amountA.toFixed(2)}, pool has only ${poolA.toFixed(2)}`)
     }
     updatePoolStatus();
   }
@@ -157,9 +159,11 @@ function sell() {
   let amountA = parseFloat(document.getElementById('tokenA').value);
   if (!isNaN(amountA)) {
     let amountB = amountA * currentRatio;
-    if (poolB - amountB >= 0) {
+    if (poolB - amountB > 0) {
       poolA += amountA;
       poolB -= amountB;
+    } else {
+      alert(`Cannot sell ${amountB.toFixed(2)}, pool has only ${poolB.toFixed(2)}`)
     }
     updatePoolStatus();
   }
@@ -173,6 +177,13 @@ function updatePoolStatus() {
   document.getElementById('poolA').textContent = formatCurrency(poolA.toFixed(2),'NCN');
   document.getElementById('poolB').textContent = formatCurrency(poolB.toFixed(2),'BRL');
   document.getElementById('constantK').textContent = (poolA * poolB).toFixed(2);
+  // Update inputs with the new conversion
+  const amountA = document.getElementById('tokenA');
+  const amountB = document.getElementById('tokenB');
+  const valueA = parseFloat(amountA.value)
+  const valueB = parseFloat(amountB.value)
+  amountA.value = (valueB / newPrice).toFixed(2); 
+  amountB.value = valueB.toFixed(2)
 
   let variationElement = document.getElementById('variation')
   let variation = (newPrice - oldPrice) / oldPrice * 100
