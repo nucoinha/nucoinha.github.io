@@ -16,9 +16,9 @@
 </head>
 <body class="light-theme">
   <div class="container">
-    <button onclick="goBack()" id="backButton">
+    <a href="../index.html" id="backButton">
       <i class="fas fa-arrow-left"></i>
-    </button>
+    </a>
 
     <button class="theme-toggle" onclick="toggleTheme()">
       <i class="fas fa-lightbulb"></i> 
@@ -91,10 +91,6 @@
   </a>
 
   <script>
-  function goBack() {
-    window.history.back();
-  }
-
   function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
