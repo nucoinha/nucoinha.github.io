@@ -5,7 +5,6 @@ const frozen_marker   = { color: 'rgba(0, 0, 255, 0.5)' }
 const hold_marker     = { color: 'rgba(0, 255, 255, 0.5)' }
 const supply_marker   = { color: 'rgb(255, 0, 0)' }
 const price_marker    = { color: 'rgb(21, 138, 12)' }
-const EMA_marker      = { color: 'rgb(0,0,0,0.4)' }
 
 const latest = (df) => Array.from(df.values).pop()
 
@@ -65,17 +64,6 @@ const plot1 = async (df, html_id) => {
         type: 'scatter',
         mode: 'line',
         line: price_marker
-    }
-
-    let price_ema_trace = {
-        x: df.index,
-        y: price_EMA,
-        name: "EMA 20",
-        xaxis: 'x',
-        yaxis: 'y2',
-        type: 'scatter',
-        mode: 'line',
-        line: EMA_marker
     }
 
     let supply_trace = {
