@@ -402,6 +402,9 @@ const updateChart = (isFirstCall) => {
       Plotly.newPlot('plot3', fig3.data, fig3.layout, config)
       bindPlot('plot1','plot2')
     } else {
+      const plot1 = document.getElementById('plot1')
+      // keep candlestick chart
+      fig1.data[0].type = plo1.data[0].type
       Plotly.react('plot1', fig1.data, fig1.layout, config)
       Plotly.react('plot2', fig2.data, fig2.layout, config)
       Plotly.react('plot3', fig3.data, fig3.layout, config)
