@@ -42,7 +42,9 @@ const getVolumeData = (df) => {
 const getFrozenData = (df) => {
   const baddata = [
     "2024-02-21T08:57:13.000Z",
-    "2024-02-21T12:42:13.136Z"
+    "2024-02-21T12:42:13.136Z",
+    "2024-02-23T13:12:12.000Z",
+    "2024-02-23T13:42:12.964Z"
   ]
 
   const frozenDiff = [0, ...diff(df['totalFrozen'].values)]

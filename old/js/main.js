@@ -1,6 +1,3 @@
-const library = indicators
-const ta = new library.IndicatorsNormalized()
-
 const font            = { size: 18, color: '#7f7f7f' }
 const positive_marker = { width: 2, size: 2, color: 'rgba(0, 255, 0, 0.5)' }
 const negative_marker = { width: 2, size: 2, color: 'rgba(255, 0, 0, 0.5)' }
@@ -58,7 +55,6 @@ const plot1 = async (df, html_id) => {
     let frozen_max = frozen_pct.max() * 100 // %
     let ymin = frozen_min * (1.0 - 0.01)
     let ymax = frozen_max * (1.0 + 0.01)
-    let price_EMA = await ta.ema(price.values, 20)
 
     let price_trace = {
         x: df.index,
@@ -153,7 +149,7 @@ const plot1 = async (df, html_id) => {
         },
     };
 
-    var data = [ price_ema_trace, price_trace, frozen_trace, hold_trace, supply_trace ]
+    var data = [ price_trace, frozen_trace, hold_trace, supply_trace ]
 
     Plotly.newPlot(html_id, data, layout);
 }
