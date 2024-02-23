@@ -404,7 +404,7 @@ const updateChart = (isFirstCall) => {
     } else {
       const plot1 = document.getElementById('plot1')
       // keep candlestick chart
-      fig1.data[0].type = plo1.data[0].type
+      fig1.data[0].type = plot1.data[0].type
       Plotly.react('plot1', fig1.data, fig1.layout, config)
       Plotly.react('plot2', fig2.data, fig2.layout, config)
       Plotly.react('plot3', fig3.data, fig3.layout, config)
