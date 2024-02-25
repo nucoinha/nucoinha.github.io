@@ -414,8 +414,12 @@ const updateChart = (isFirstCall) => {
       Plotly.react('plot2', fig2.data, fig2.layout, config)
       Plotly.react('plot3', fig3.data, fig3.layout, config)
 
-      const newestIndex = getLatest(df.index)
-      plot1.layout.xaxis.range[1] = newestIndex 
+      const newIndex = new Date(getLatest(df.index))
+      const userIndex = new Date(plot1.layout.xaxis.range[1])
+      // If user zoomed in and there is enough space for new data leave it
+      if (newIndex > userIndex) {
+        plot1.layout.xaxis.range[1] = newIndex
+      }
     }
     setInitialMode();
   });
