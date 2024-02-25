@@ -5,6 +5,15 @@ const config = {
   displaylogo: false
 }
 
+// Outages :(
+const baddata = [
+    "2024-02-21T08:57:13.000Z",
+    "2024-02-21T12:42:13.136Z",
+    "2024-02-23T13:12:12.000Z",
+    "2024-02-23T13:42:12.964Z"
+]
+
+
 const getCandlestickData = (df) => {
   // For line graph if there's no close price use avg column
   const prices = df['close'].values.map(
@@ -40,13 +49,6 @@ const getVolumeData = (df) => {
 }
 
 const getFrozenData = (df) => {
-  const baddata = [
-    "2024-02-21T08:57:13.000Z",
-    "2024-02-21T12:42:13.136Z",
-    "2024-02-23T13:12:12.000Z",
-    "2024-02-23T13:42:12.964Z"
-  ]
-
   const frozenDiff = [0, ...diff(df['totalFrozen'].values)]
   const frozenMask = frozenDiff.map((value, index) => { return value > 0 });
   const frozenColor = frozenMask.map((value, index) => { return value ? "blue" : "red" });
@@ -61,7 +63,7 @@ const getFrozenData = (df) => {
 
   return {
     x: df.index,
-    y: frozenDiff,
+    y: frozenDiff.map(x => Math.abs(x)),
     type: 'bar',
     marker: {
       mask: frozenMask,
@@ -140,8 +142,8 @@ const plot1 = (df) => {
       roworder:'bottom to top',
       subplots:[['xy'], ['xy2'], ['xy3']],
       yaxis:  {domain: [0.42, 1.0], title: 'Price<br>(R$)', separators: ',.'},
-      yaxis2: {domain: [0.22, 0.4], title: 'Volume<br>(R$)'},
-      yaxis3: {domain: [0.00, 0.2], title: 'Frozen<br>(NCN)'},
+      yaxis2: {domain: [0.22, 0.4], minallowed: 0, autorange: 'max', rangemode: 'tozero', title: 'Volume<br>(R$)'},
+      yaxis3: {domain: [0.00, 0.2], minallowed: 0, autorange: 'max', rangemode: 'tozero', title: 'Frozen<br>(NCN)'},
       xaxis: {
         rangeselector: {
           buttons: [
@@ -394,7 +396,8 @@ const updateChart = (isFirstCall) => {
 
   dfd.readCSV(dataUrl).then(async (df) => {
     df = await parseDataFrame(df)
-    lastUpdateLabel.text = `Last Update: ${getLastUpdate(df)}`
+    const lastUpdate = getLastUpdate(df)
+    lastUpdateLabel.text = `Last Update: ${lastUpdate}`
     fig1 = plot1(df)
     fig2 = plot2(df)
     fig3 = plot3(df)
@@ -406,10 +409,13 @@ const updateChart = (isFirstCall) => {
     } else {
       const plot1 = document.getElementById('plot1')
       // keep candlestick chart
-      fig1.data[0].type = plot1.data[0].type
+      if (plot1.data) fig1.data[0].type = plot1.data[0].type
       Plotly.react('plot1', fig1.data, fig1.layout, config)
       Plotly.react('plot2', fig2.data, fig2.layout, config)
       Plotly.react('plot3', fig3.data, fig3.layout, config)
+
+      const newestIndex = getLatest(df.index)
+      plot1.layout.xaxis.range[1] = newestIndex 
     }
     setInitialMode();
   });
