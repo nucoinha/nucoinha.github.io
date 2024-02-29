@@ -67,18 +67,14 @@ const parseDataFrame = async (df) => {
   mergedData.setIndex({ column: 'date', drop: true, inplace:true});
   mergedData.tail().print()
   return mergedData 
-  const nullValues = Array(newdf.index.length).fill(null);
-  newdf.addColumn('totalFrozen',       nullValues, {inplace:true})
-  newdf.addColumn('circulationSupply', nullValues, {inplace:true})
-  newdf.addColumn('hold',              nullValues, {inplace:true})
-  return newdf
 }
 
 const applyLightMode = () => {
   var plot = document.getElementById('plot1');
   Plotly.relayout('plot1', lightLayout);
   Plotly.relayout('plot2', lightLayout);
-  Plotly.relayout('plot3', lightLayout);
+  Plotly.relayout('heatmap', lightLayout);
+  Plotly.relayout('scatter', lightLayout);
   const frozenBars = plot.data[1]
   const frozenColorUp   = lightLayout.template.colors.frozen
   const frozenColorDown = lightLayout.template.colors.melting
@@ -97,7 +93,8 @@ const applyDarkMode = () => {
   var plot = document.getElementById('plot1');
   Plotly.relayout('plot1', darkLayout);
   Plotly.relayout('plot2', darkLayout);
-  Plotly.relayout('plot3', darkLayout);
+  Plotly.relayout('heatmap', darkLayout);
+  Plotly.relayout('scatter', darkLayout);
   const frozenBars = plot.data[1]
   const frozenColorUp   = darkLayout.template.colors.frozen
   const frozenColorDown = darkLayout.template.colors.melting

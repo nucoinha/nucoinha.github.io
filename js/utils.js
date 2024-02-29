@@ -83,8 +83,13 @@ const copyAddress = (htmlId) => {
 
 const toHumanReadable = (name) => {
     var words = name.match(/[A-Za-z][a-z]*/g) || [];
-
     return words.map(capitalize).join(" ");
+}
+const fromHumanReadable = (name) => {
+    var words = name.match(/[A-Za-z][a-z]*/g) || [];
+    return words.map(
+		(x,index) => (index > 0) ? x.toUpperCase() : x.toLowerCase()
+	).join("");
 }
 
 const capitalize = (word) => {

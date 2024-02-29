@@ -7,10 +7,10 @@ const config = {
 
 // Outages :(
 const baddata = [
-    "2024-02-21T08:57:13.000Z",
-    "2024-02-21T12:42:13.136Z",
-    "2024-02-23T13:12:12.000Z",
-    "2024-02-23T13:42:12.964Z"
+  "2024-02-21T08:57:13.000Z",
+  "2024-02-21T12:42:13.136Z",
+  "2024-02-23T13:12:12.000Z",
+  "2024-02-23T13:42:12.964Z"
 ]
 
 
@@ -264,17 +264,72 @@ const plot2 = (df) => {
   }
 }
 
+const plotScatterData = (df, A, B) => {
+  var threshold = 3;
+  df.dropNa({inplace: true})
 
-const plot3 = (df) => {
+  var color = df.index.map(date => new Date(date).getTime())
+  var cbar = {
+    title: "Date",
+    orientation: "h",
+  }
+
+  if (B == 'volume' || A == 'volume') {
+    const volumeMask = df['close'].values.map((close, index) => {return close > df['open'].values[index]});
+    color = volumeMask.map((bool,index) => { return bool ? "green" : "red" })
+    cbar = false;
+  }
+
+  if (B == 'totalFrozen' || A == 'totalFrozen') {
+    const frozenDiff = [0, ...diff(df['totalFrozen'].values)]
+    const frozenMask = frozenDiff.map((value, index) => { return value > 0 });
+    const color = frozenMask.map((value, index) => { return value ? "blue" : "red" });
+  }
+
+
+  const dataX = filterOutliers(df[A].values,threshold)
+  const dataY = filterOutliers(df[B].values,threshold)
+  const maxX = Math.max(...dataX) 
+  const minX = Math.min(...dataX)
+  const maxY = Math.max(...dataY) 
+  const minY = Math.min(...dataY)
+
+  let data = [{
+    x: dataX,
+    y: dataY,
+    mode: 'markers',
+    type: 'scatter',
+    marker: {
+      size: 9,
+      color: color,
+      colormap: 'viridis',
+      opacity: 0.5,
+      colorbar: cbar,
+    },
+  }]
+
+  let layout = {
+    title: `${toHumanReadable(A)} x ${toHumanReadable(B)}`,
+    xaxis: {title: toHumanReadable(A), range: [minX * (1 - 0.01), maxX * (1 + 0.01)] },
+    yaxis: {title: toHumanReadable(B), range: [minY * (1 - 0.01), maxY * (1 + 0.01)] },
+  }
+
+  return { data: data, layout: layout }
+}
+
+
+const plotCorrelationMatrix = (df) => {
   let heatmapData = generateHeatmapData(df)
 
   let data = [{
-    x: heatmapData.x.map(toHumanReadable),
-    y: heatmapData.y.map(toHumanReadable),
+    x: heatmapData.x,
+    y: heatmapData.y,
     z: heatmapData.z,
     type: 'heatmap',
     colorscale: rdylgnColors, // js/themes.js
     hoverongaps: false,
+    xgap: 4,
+    ygap: 4,
     colorbar: {
       orientation: "h",
     }
@@ -400,11 +455,13 @@ const updateChart = (isFirstCall) => {
     lastUpdateLabel.text = `Last Update: ${lastUpdate}`
     fig1 = plot1(df)
     fig2 = plot2(df)
-    fig3 = plot3(df)
+    fig3 = plotCorrelationMatrix(df)
+    fig4 = plotScatterData(df,'totalFrozen','circulationSupply')
     if (isFirstCall) {
       Plotly.newPlot('plot1', fig1.data, fig1.layout, config)
       Plotly.newPlot('plot2', fig2.data, fig2.layout, config)
-      Plotly.newPlot('plot3', fig3.data, fig3.layout, config)
+      Plotly.newPlot('heatmap', fig3.data, fig3.layout, config)
+      Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
       bindPlot('plot1','plot2')
     } else {
       const plot1 = document.getElementById('plot1')
@@ -412,15 +469,33 @@ const updateChart = (isFirstCall) => {
       if (plot1.data) fig1.data[0].type = plot1.data[0].type
       Plotly.react('plot1', fig1.data, fig1.layout, config)
       Plotly.react('plot2', fig2.data, fig2.layout, config)
-      Plotly.react('plot3', fig3.data, fig3.layout, config)
+      Plotly.react('heatmap', fig3.data, fig3.layout, config)
+      Plotly.react('scatter', fig4.data, fig4.layout, config)
 
-      const newIndex = new Date(getLatest(df.index))
-      const userIndex = new Date(plot1.layout.xaxis.range[1])
+      const newX = new Date(getLatest(df.index))
+      const oldX = new Date(plot1.layout.xaxis.range[1])
       // If user zoomed in and there is enough space for new data leave it
-      if (newIndex > userIndex) {
-        plot1.layout.xaxis.range[1] = newIndex
+      if (newX > oldX) {
+        plot1.layout.xaxis.range[1] = newX
       }
     }
+    const heatmap = document.getElementById('heatmap');
+    heatmap.on('plotly_click', (data) => {
+      console.log(data)
+      const scatter = document.getElementById('scatter');
+      const nameX = data.points[0].x
+      const nameY = data.points[0].y
+
+      fig = plotScatterData(df,nameX,nameY)
+
+      Plotly.react('scatter', fig.data, fig.layout, config);
+      const isDarkMode = getCookie('mode') === 'dark';
+      if (isDarkMode) {
+        Plotly.relayout('scatter', darkLayout);
+      } else {
+        Plotly.relayout('scatter', lightLayout);
+      }
+    })
     setInitialMode();
   });
   console.log('Chart updated!')

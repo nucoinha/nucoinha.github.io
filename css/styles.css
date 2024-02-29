@@ -328,3 +328,31 @@ a.btn, input.btn a.warning {
   padding-bottom: 84px;
 }
 
+.container {
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
+	align-items: flex-start;
+}
+.heatmap-container, .scatter-container {
+	width: 50vw;
+	padding: 10px;
+	box-sizing: border-box;
+}
+#correlation-heatmap {
+	width: 100vw;
+	height: 50vh;
+	border: 1px solid #ccc;
+	cursor: pointer; /* Add cursor pointer for better user interaction */
+}
+#scatter-plot {
+	width: 100vw;
+	height: 50vh;
+	border: 1px solid #ccc;
+}
+/* Responsive layout for mobile */
+@media only screen and (max-width: 600px) {
+	.heatmap-container, .scatter-container {
+		width: 100vw;
+	}
+}

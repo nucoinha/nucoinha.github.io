@@ -172,3 +172,14 @@ const scaleArrayValues = (array, newMin, newMax) => {
 
     return scaledArray;
 }
+
+const calculateZScores = data => {
+    const mean = data.reduce((sum, value) => sum + value, 0) / data.length;
+    const standardDeviation = Math.sqrt(data.reduce((sum, value) => sum + Math.pow(value - mean, 2), 0) / data.length);
+    return data.map(value => (value - mean) / standardDeviation);
+};
+
+const filterOutliers = (data, threshold) => {
+    const zScores = calculateZScores(data);
+    return data.filter((value, index) => Math.abs(zScores[index]) <= threshold);
+};
