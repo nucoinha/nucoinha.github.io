@@ -10,7 +10,8 @@ const baddata = [
   "2024-02-21T08:57:13.000Z",
   "2024-02-21T12:42:13.136Z",
   "2024-02-23T13:12:12.000Z",
-  "2024-02-23T13:42:12.964Z"
+  "2024-02-29T22:12.12.934Z",
+  "2024-03-02T12:12:12.876Z"
 ]
 
 
@@ -33,7 +34,8 @@ const getCandlestickData = (df) => {
 }
 
 const getVolumeData = (df) => {
-  const volumeMask = df['close'].values.map((close, index) => {return close > df['open'].values[index]});
+  const volumeData = fillMissingValues(df['close'].values)
+  const volumeMask = volumeData.map((close, index) => {return close > df['open'].values[index]});
   const volumeColor = volumeMask.map((bool,index) => { return bool ? "green" : "red" })
   return {
     x: df.index,
@@ -49,17 +51,10 @@ const getVolumeData = (df) => {
 }
 
 const getFrozenData = (df) => {
-  const frozenDiff = [0, ...diff(df['totalFrozen'].values)]
+  const frozenData = fillMissingValues(df['totalFrozen'].values)
+  const frozenDiff = [0, ...diff(frozenData)]
   const frozenMask = frozenDiff.map((value, index) => { return value > 0 });
   const frozenColor = frozenMask.map((value, index) => { return value ? "blue" : "red" });
-
-  df.index.map((val,index) => {
-    baddata.forEach(data => {
-      if (val == data) {
-        frozenDiff[index] = null
-      }
-    })
-  })
 
   return {
     x: df.index,

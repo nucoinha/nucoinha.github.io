@@ -82,16 +82,26 @@ const copyAddress = (htmlId) => {
 }
 
 const toHumanReadable = (name) => {
-    var words = name.match(/[A-Za-z][a-z]*/g) || [];
-    return words.map(capitalize).join(" ");
+  var words = name.match(/[A-Za-z][a-z]*/g) || [];
+  return words.map(capitalize).join(" ");
 }
 const fromHumanReadable = (name) => {
-    var words = name.match(/[A-Za-z][a-z]*/g) || [];
-    return words.map(
-		(x,index) => (index > 0) ? x.toUpperCase() : x.toLowerCase()
-	).join("");
+  var words = name.match(/[A-Za-z][a-z]*/g) || [];
+  return words.map(
+    (x,index) => (index > 0) ? x.toUpperCase() : x.toLowerCase()
+  ).join("");
 }
 
 const capitalize = (word) => {
-    return word.charAt(0).toUpperCase() + word.substring(1);
+  return word.charAt(0).toUpperCase() + word.substring(1);
+}
+
+// Function to fill missing values in a column
+const fillMissingValues = (column) => {
+  for (let i = 0; i < column.length; i++) {
+    if (column[i] === null || column[i] === undefined) {
+      column[i] = column[i - 1];
+    }
+  }
+  return column;
 }

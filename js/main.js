@@ -12,7 +12,7 @@ const downloadCSVUrl = (gistId) => {
 }
 const getOldData = async () => {
   const cacheBust = '' + Math.random()
-  const gistId = '1321a7f81ce1f2ecf8e2ef33e73b4bb1'
+  const gistId = '58ff8c58f93dedc7ea56f02e28bf19ef'
   const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
   try {
     // Read the CSV file
@@ -37,36 +37,21 @@ const parseDataFrame = async (df) => {
   } else if (df.columns.includes('date')) {
     datetime = df['date']
   }
+
   let newdf = df.iloc({ rows: datetime.index })
   newdf.addColumn('datetime', datetime.values, {inplace:true})
   newdf.setIndex({ column: "datetime", drop: true, inplace:true});
-  if (newdf.columns.includes('circulationSupply') &&
-    newdf.columns.includes('totalFrozen')) {
+  if (newdf.columns.includes('circulationSupply') && newdf.columns.includes('totalFrozen')) {
     let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
     newdf.addColumn('hold', hold, {inplace:true})
     return newdf;
   }
-
+  const nullValues = Array(newdf.index.length).fill(0.0);
+  newdf.addColumn('totalFrozen',       nullValues, {inplace:true})
+  newdf.addColumn('circulationSupply', nullValues, {inplace:true})
+  newdf.addColumn('hold',              nullValues, {inplace:true})
+  return newdf
   oldDataFrame = await getOldData()
-  // Convert datetimes into a date-only, then drop the duplicates keeping the latest value
-  const resampled = oldDataFrame['datetime']
-                      .map(val => new Date(val).toISOString().split('T')[0])
-                      .dropDuplicates({ keep: "last" })
-  // Use the resampled index, to index the dataFrame, this way we get the latest info of a given day
-  oldDataFrame = oldDataFrame.loc({ rows: resampled.index, columns: ['datetime', 'frozen', 'supply']})
-  oldDataFrame.addColumn('datetime', resampled)
-  oldDataFrame.resetIndex({ inplace: true })
-  // rename for conforming with new column names
-  oldDataFrame.rename({'datetime': 'date', 'frozen':'totalFrozen', 'supply':'circulationSupply'}, {inplace:true})
-
-  // Merge the interval data into the daily DataFrame based on date
-  const mergedData = dfd.merge({left: newdf, right:oldDataFrame,
-    on: ['date'],
-    how: 'left'
-  });
-  mergedData.setIndex({ column: 'date', drop: true, inplace:true});
-  mergedData.tail().print()
-  return mergedData 
 }
 
 const applyLightMode = () => {
