@@ -428,70 +428,83 @@ const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
   return { data: data, layout: layout }
 }
 
-const updateChart = (isFirstCall) => {
-  const urlParams = getURLParams()
-  const gistIdInput = document.getElementById('gistId')
-  const getCSVButton = document.getElementById('dataSrc')
-  const lastUpdateLabel = document.getElementById('lastUpdate')
-
-  const gistId = gistIdInput.value ? gistIdInput.value
-    : urlParams.gistId ? urlParams.gistId : null
-  if (!gistId) return
-
-  if (!urlParams.gistId || urlParams.gistId !== gistId) setURLParam('gistId',gistId)
-  if (!gistIdInput.value || gistIdInput.value !== gistId) gistIdInput.value = gistId
-
-  const dataUrl = dataPath(gistId)
-  getCSVButton.href = downloadCSVUrl(gistId)
-
-  dfd.readCSV(dataUrl).then(async (df) => {
-    df = await parseDataFrame(df)
-    const lastUpdate = getLastUpdate(df)
-    lastUpdateLabel.text = `Last Update: ${lastUpdate}`
-    fig1 = plot1(df)
-    fig2 = plot2(df)
-    fig3 = plotCorrelationMatrix(df)
-    fig4 = plotScatterData(df,'totalFrozen','circulationSupply')
-    if (isFirstCall) {
-      Plotly.newPlot('plot1', fig1.data, fig1.layout, config)
-      Plotly.newPlot('plot2', fig2.data, fig2.layout, config)
-      Plotly.newPlot('heatmap', fig3.data, fig3.layout, config)
-      Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
-      bindPlot('plot1','plot2')
-    } else {
-      const plot1 = document.getElementById('plot1')
-      // keep candlestick chart
-      if (plot1.data) fig1.data[0].type = plot1.data[0].type
-      Plotly.react('plot1', fig1.data, fig1.layout, config)
-      Plotly.react('plot2', fig2.data, fig2.layout, config)
-      Plotly.react('heatmap', fig3.data, fig3.layout, config)
-      Plotly.react('scatter', fig4.data, fig4.layout, config)
-
-      const newX = new Date(getLatest(df.index))
-      const oldX = new Date(plot1.layout.xaxis.range[1])
-      // If user zoomed in and there is enough space for new data leave it
-      if (newX > oldX) {
-        plot1.layout.xaxis.range[1] = newX
+const loadOlderDays = async (date) => {
+  const olderDates = generateDates(date)//,end);
+  const target = olderDates.length
+  let misses = 0;
+  olderDates.forEach(async (date) => {
+    if (loadedDays[date] || dateFns.isBefore(date,oldestDate)) return;
+    const url = dataPath(gistId, date)
+    dfd.readCSV(url).then(async (data) => {
+      loadedDays[date] = data;
+      if (Object.values(loadedDays).length === target - misses) {
+        await updateChart()
       }
-    }
-    const heatmap = document.getElementById('heatmap');
-    heatmap.on('plotly_click', (data) => {
-      console.log(data)
-      const scatter = document.getElementById('scatter');
-      const nameX = data.points[0].x
-      const nameY = data.points[0].y
+    }).catch(err => {
+      misses++;
+    });
+  })
+}
 
-      fig = plotScatterData(df,nameX,nameY)
-
-      Plotly.react('scatter', fig.data, fig.layout, config);
-      const isDarkMode = getCookie('mode') === 'dark';
-      if (isDarkMode) {
-        Plotly.relayout('scatter', darkLayout);
-      } else {
-        Plotly.relayout('scatter', lightLayout);
+const updateChart = async (isFirstCall) => {
+  const lastUpdateLabel = document.getElementById('lastUpdate')
+  const today = new Date();
+  await loadOlderDays(dateFns.subDays(today, 5));
+  const combinedDf = dfd.concat({ dfList: Object.values(loadedDays), axis: 0 });
+  df = await parseDataFrame(combinedDf)
+  const lastUpdate = getLastUpdate(df)
+  lastUpdateLabel.text = `Last Update: ${lastUpdate}`
+  fig1 = plot1(df)
+  fig2 = plot2(df)
+  fig3 = plotCorrelationMatrix(df)
+  fig4 = plotScatterData(df,'totalFrozen','circulationSupply')
+  if (isFirstCall) {
+    Plotly.newPlot('plot1', fig1.data, fig1.layout, config)
+    Plotly.newPlot('plot2', fig2.data, fig2.layout, config)
+    Plotly.newPlot('heatmap', fig3.data, fig3.layout, config)
+    Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
+    bindPlot('plot1','plot2')
+    const plot1 = document.getElementById('plot1')
+    plot1.on('plotly_relayout', async (event) => {
+      if (event['xaxis.range[0]']) { // || event['xaxis.range[1]']) {
+        const olderRange = event['xaxis.range[0]']
+        const olderDate = new Date(olderRange.split(' ')[0]);
+        await loadOlderDays(olderDate)
       }
     })
-    setInitialMode();
-  });
+  } else {
+    const plot1 = document.getElementById('plot1')
+    // keep candlestick chart
+    if (plot1.data) fig1.data[0].type = plot1.data[0].type
+    Plotly.react('plot1', fig1.data, fig1.layout, config)
+    Plotly.react('plot2', fig2.data, fig2.layout, config)
+    Plotly.react('heatmap', fig3.data, fig3.layout, config)
+    Plotly.react('scatter', fig4.data, fig4.layout, config)
+
+    const newX = new Date(getLatest(df.index))
+    const oldX = new Date(plot1.layout.xaxis.range[1])
+    // If user zoomed in and there is enough space for new data leave it
+    if (newX > oldX) {
+      plot1.layout.xaxis.range[1] = newX
+    }
+  }
+  const heatmap = document.getElementById('heatmap');
+  heatmap.on('plotly_click', (data) => {
+    console.log(data)
+    const scatter = document.getElementById('scatter');
+    const nameX = data.points[0].x
+    const nameY = data.points[0].y
+
+    fig = plotScatterData(df,nameX,nameY)
+
+    Plotly.react('scatter', fig.data, fig.layout, config);
+    const isDarkMode = getCookie('mode') === 'dark';
+    if (isDarkMode) {
+      Plotly.relayout('scatter', darkLayout);
+    } else {
+      Plotly.relayout('scatter', lightLayout);
+    }
+  })
+  setInitialMode();
   console.log('Chart updated!')
 };

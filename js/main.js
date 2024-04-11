@@ -1,27 +1,28 @@
+const loadedDays = {}
+const oldestDate = new Date(9,2,2024);
+const gistId = '56c6565767600102bc80df7ae0c9bda7' 
+
 const getLastUpdate = (df) => {
   const d = new Date(getLatest(df.index))
   return new Date(d.setHours(d.getHours() + 3)).toLocaleString('pt-BR', {timeZone: 'America/Sao_Paulo'})
 }
 
-const dataPath = (gistId) => {
-  const cacheBust = '' + Math.random();
-  return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
+const generateDates = (start, end = null) => {
+  let startDate = start;
+  let today = new Date();
+  let endDate = end ? end : dateFns.subDays(today, 1);
+  let dateRange = dateFns.eachDayOfInterval({ start: startDate, end: endDate });
+  let reversedDateRange = dateRange.reverse()
+  return reversedDateRange;
+}
+
+const dataPath = (gistId,date) => {
+  const cacheBust = Math.random();
+  const formattedDate = dateFns.format(date, 'yyyy-MM-dd');
+  return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/data_${formattedDate}.csv?id=${cacheBust}`
 }
 const downloadCSVUrl = (gistId) => {
   return `https://gist.githubusercontent.com/nucoinha/${gistId}/`
-}
-const getOldData = async () => {
-  const cacheBust = '' + Math.random()
-  const gistId = '58ff8c58f93dedc7ea56f02e28bf19ef'
-  const dataPath = `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/?id=${cacheBust}`
-  try {
-    // Read the CSV file
-    const df = await dfd.readCSV(dataPath);
-    return df;
-  } catch (error) {
-    console.error("Error reading CSV:", error);
-    return null;
-  }
 }
 
 const parseDataFrame = async (df) => {
@@ -40,6 +41,7 @@ const parseDataFrame = async (df) => {
 
   let newdf = df.iloc({ rows: datetime.index })
   newdf.addColumn('datetime', datetime.values, {inplace:true})
+  newdf.sortValues('datetime', { inplace: true });
   newdf.setIndex({ column: "datetime", drop: true, inplace:true});
   if (newdf.columns.includes('circulationSupply') && newdf.columns.includes('totalFrozen')) {
     let hold = newdf['circulationSupply'].sub(newdf['totalFrozen'])
