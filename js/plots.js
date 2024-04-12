@@ -454,40 +454,32 @@ const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
   return { data: data, layout: layout }
 }
 
-const loadOlderDays = async (startDate, endDate, firstCall) => {
+const loadOlderDays = async (startDate, endDate) => {
+  endDate = endDate ?  endDate : getToday();
   const olderDates = generateDates(startDate, endDate)
-  const target = olderDates.length
-  const today = new Date();
-  let misses = 0;
-  olderDates.forEach(async (date) => {
-    if (!!loadedDays[date] || dateFns.isBefore(date,oldestDate)) {
-	return;
-    }
-    const url = dataPath(gistId, date)
-    dfd.readCSV(url).then(async (data) => {
-      if (date !== today) loadedDays[date] = data;
-      if (Object.values(loadedDays).length === target - misses - 1) {
-        await updateChart(firstCall, true)
-      }
-    }).catch(err => {
-      misses++;
-    });
-  })
+  await Promise.all(olderDates.map(async (date) => {
+    if (GLOBAL_STATE.loadedDays[date] && !isToday(date)) return;
+    const url = dataPath(GLOBAL_GIST_ID, date);
+    await dfd
+      .readCSV(url)
+      .then((data) => {
+        GLOBAL_STATE.loadedDays[date] = data;
+      }).catch(err => {
+        GLOBAL_STATE.loadedDays[date] = true;
+        GLOBAL_STATE.missingDates = 0;
+      })
+  }))
+  return Object.values(GLOBAL_STATE.loadedDays)
 }
 
-const updateChart = async (isFirstCall, loaded) => {
-  const lastUpdateLabel = document.getElementById('lastUpdate')
-  if (isFirstCall && !loaded) {
-    const today = new Date();
-    const start = dateFns.subDays(today,5)
-    const end   = today; 
-    await loadOlderDays(start, end, true)
-    return;
-  }
-  const combinedDf = dfd.concat({ dfList: Object.values(loadedDays), axis: 0 });
+const updateChart = async (isFirstCall) => {
+  const loaded = await loadOlderDays(GLOBAL_STATE.oldestLoaded)
+  const combinedDf = dfd.concat({ dfList: loaded, axis: 0 });
   df = await parseDataFrame(combinedDf)
   const lastUpdate = getLastUpdate(df)
+  const lastUpdateLabel = document.getElementById('lastUpdate')
   lastUpdateLabel.text = `Last Update: ${lastUpdate}`
+
   fig1 = plot1(df)
   fig2 = plot2(df)
   // fig3 = plotCorrelationMatrix(df)
@@ -499,13 +491,11 @@ const updateChart = async (isFirstCall, loaded) => {
     // Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
     bindPlot('plot1','plot2')
     const plot1 = document.getElementById('plot1')
-    plot1.on('plotly_relayout', async (event) => {
+    plot1.on('plotly_relayout', (event) => {
       if (event['xaxis.range[0]']) {
         const oldDate = event['xaxis.range[0]']
-	const today = new Date();
-	const start = new Date(oldDate.split(' ')[0]);
-	const end   = today;
-        await loadOlderDays(start, end, false)
+        GLOBAL_STATE.oldestLoaded = new Date(oldDate.split(' ')[0]);
+        updateChart()
       }
     })
   } else {

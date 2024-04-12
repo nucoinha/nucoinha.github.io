@@ -1,6 +1,24 @@
-const loadedDays = {}
-const oldestDate = new Date(9,2,2024);
-const gistId = '56c6565767600102bc80df7ae0c9bda7' 
+
+const GLOBAL_GIST_ID = '56c6565767600102bc80df7ae0c9bda7' 
+
+const getToday = () => {
+  date = new Date();
+  date.setHours(0,0,0,0);
+  return date;
+}
+
+const getDate = (date) => {
+  date.setHours(0,0,0,0);
+  return date;
+}
+
+const isSameDate = (date1, date2) => {
+  return getDate(date1).getTime() === getDate(date2).getTime()
+}
+
+const isToday = (date) => {
+  return isSameDate(getDate(date),getToday())
+}
 
 const getLastUpdate = (df) => {
   const d = new Date(getLatest(df.index))
@@ -14,9 +32,8 @@ const generateDates = (start, end) => {
 }
 
 const dataPath = (gistId,date) => {
-  const today = new Date();
   const cacheBust = Math.random();
-  const querystring = (date < today) ? `?id=${cacheBust}` : ''
+  const querystring = isToday(date) ? `?id=${cacheBust}` : ''
   const formattedDate = dateFns.format(date, 'yyyy-MM-dd');
   return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/data_${formattedDate}.csv${querystring}`
 }
@@ -190,3 +207,14 @@ const bindPlot = (plotId, boundPlotId) => {
   plot.on('plotly_relayout', applyToAll)
   plot.on('plotly_restyle', applyToAll)
 }
+
+const initialState = () => {
+  return {
+    loadedDays: {},
+    oldestDate: new Date(9,2,2024),
+    oldestLoaded: dateFns.subDays(getToday(), 5),
+    missingDates: 0
+  }
+}
+
+const GLOBAL_STATE = initialState();
