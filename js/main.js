@@ -14,9 +14,11 @@ const generateDates = (start, end) => {
 }
 
 const dataPath = (gistId,date) => {
+  const today = new Date();
   const cacheBust = Math.random();
+  const querystring = (date < today) ? `?id=${cacheBust}` : ''
   const formattedDate = dateFns.format(date, 'yyyy-MM-dd');
-  return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/data_${formattedDate}.csv?id=${cacheBust}`
+  return `https://gist.githubusercontent.com/nucoinha/${gistId}/raw/data_${formattedDate}.csv${querystring}`
 }
 
 const dailyDataPath = (gistId) => {
