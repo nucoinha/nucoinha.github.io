@@ -186,8 +186,8 @@ const plot1 = (df) => {
 }
 
 const plot2 = (df) => {
-  let frozen = df['totalFrozen']
-  let supply = df['circulationSupply']
+  let frozen = df.totalFrozen
+  let supply = df.circulationSupply
   let latestSupply = getLatest(supply.values)
   let latestFrozen = getLatest(frozen.values)
   let frozenPct = frozen.div(supply)
@@ -202,23 +202,42 @@ const plot2 = (df) => {
   let pctYMin = pctMin * (1.0 - 0.01)
   let pctYMax = pctMax * (1.0 + 0.01)
 
-  let pctTrace = {
+  let absSupplyTrace = {
     x: df.index,
-    y: frozenPct.values.map(x => 100*x),
-    name: 'Frozen (%)',
+    y: supply.values,
+    name: 'Supply (NCN)',
+    hovertemplate: '%{y} NCN<br>%{x}',
     xaxis: 'x',
-    yaxis: 'y1',
-    fill: 'tozeroy',
-    hovertemplate: '%{y:.2f}%<br>%{x}'
+    yaxis: 'y2',
   }
 
-  let absTrace = {
+  let absFrozenTrace = {
     x: df.index,
     y: frozen.values,
     name: 'Frozen (NCN)',
+    hovertemplate: '%{y} NCN<br>%{x}',
     xaxis: 'x',
-    yaxis: 'y2',
-    hovertemplate: '%{y:,.2f} NCN<br>%{x}'
+    yaxis: 'y3',
+  }
+
+  let frozenTrace = {
+    x: df.index,
+    y: frozen.values,
+    name: 'Frozen (%)',
+    xaxis: 'x',
+    yaxis: 'y1',
+    hovertemplate: '%{y:.2f}%<br>%{x}',
+    stackgroup: 'one', groupnorm:'percent'
+  }
+
+  let supplyTrace = {
+    x: df.index,
+    y: supply.values,
+    name: 'Supply (%)',
+    xaxis: 'x',
+    yaxis: 'y1',
+    hovertemplate: '%{y:.2f}%<br>%{x}',
+    stackgroup: 'one'
   }
 
   const layout = {
@@ -239,22 +258,29 @@ const plot2 = (df) => {
     xaxis: {
     },
     yaxis: {
-      title: "Frozen (%)",
-      range: [pctYMin, pctYMax],
+      showgrid: false,
+      zeroline: false,
+      visible: false, 
+      range: [0.0, 100.0],
+    },
+    yaxis2: {
+      title: "Supply (NCN)",
+      overlaying: 'y',
+      range: [Math.min(...supply.values), Math.max(...supply.values)],
+      domain: [0.1, 1.0],
+      side: 'right'
+    },
+    yaxis3: {
+      title: "Frozen (NCN)",
+      overlaying: 'y',
+      range: [Math.min(...frozen.values), Math.max(...frozen.values)],
       domain: [0.1, 1.0],
       side: 'left'
     },
-    yaxis2: {
-      title: "Frozen (NCN)",
-      overlaying: 'y',
-      range: [absYMin, absYMax],
-      domain: [0.1, 1.0],
-      side: 'right'
-    }
   };
 
   return {
-    data: [absTrace, pctTrace],
+    data: [frozenTrace, supplyTrace, absSupplyTrace, absFrozenTrace],
     layout: layout
   }
 }
@@ -428,17 +454,20 @@ const plotPctChange = ({df, columnName, positiveLabel, negativeLabel}) => {
   return { data: data, layout: layout }
 }
 
-const loadOlderDays = async (date) => {
-  const olderDates = generateDates(date)//,end);
+const loadOlderDays = async (startDate, endDate, firstCall) => {
+  const olderDates = generateDates(startDate, endDate)
   const target = olderDates.length
+  const today = new Date();
   let misses = 0;
   olderDates.forEach(async (date) => {
-    if (loadedDays[date] || dateFns.isBefore(date,oldestDate)) return;
+    if (!!loadedDays[date] || dateFns.isBefore(date,oldestDate)) {
+	return;
+    }
     const url = dataPath(gistId, date)
     dfd.readCSV(url).then(async (data) => {
-      loadedDays[date] = data;
-      if (Object.values(loadedDays).length === target - misses) {
-        await updateChart()
+      if (date !== today) loadedDays[date] = data;
+      if (Object.values(loadedDays).length === target - misses - 1) {
+        await updateChart(firstCall, true)
       }
     }).catch(err => {
       misses++;
@@ -446,30 +475,37 @@ const loadOlderDays = async (date) => {
   })
 }
 
-const updateChart = async (isFirstCall) => {
+const updateChart = async (isFirstCall, loaded) => {
   const lastUpdateLabel = document.getElementById('lastUpdate')
-  const today = new Date();
-  await loadOlderDays(dateFns.subDays(today, 5));
+  if (isFirstCall && !loaded) {
+    const today = new Date();
+    const start = dateFns.subDays(today,5)
+    const end   = today; 
+    await loadOlderDays(start, end, true)
+    return;
+  }
   const combinedDf = dfd.concat({ dfList: Object.values(loadedDays), axis: 0 });
   df = await parseDataFrame(combinedDf)
   const lastUpdate = getLastUpdate(df)
   lastUpdateLabel.text = `Last Update: ${lastUpdate}`
   fig1 = plot1(df)
   fig2 = plot2(df)
-  fig3 = plotCorrelationMatrix(df)
-  fig4 = plotScatterData(df,'totalFrozen','circulationSupply')
+  // fig3 = plotCorrelationMatrix(df)
+  // fig4 = plotScatterData(df,'totalFrozen','circulationSupply')
   if (isFirstCall) {
     Plotly.newPlot('plot1', fig1.data, fig1.layout, config)
     Plotly.newPlot('plot2', fig2.data, fig2.layout, config)
-    Plotly.newPlot('heatmap', fig3.data, fig3.layout, config)
-    Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
+    // Plotly.newPlot('heatmap', fig3.data, fig3.layout, config)
+    // Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
     bindPlot('plot1','plot2')
     const plot1 = document.getElementById('plot1')
     plot1.on('plotly_relayout', async (event) => {
-      if (event['xaxis.range[0]']) { // || event['xaxis.range[1]']) {
-        const olderRange = event['xaxis.range[0]']
-        const olderDate = new Date(olderRange.split(' ')[0]);
-        await loadOlderDays(olderDate)
+      if (event['xaxis.range[0]']) {
+        const oldDate = event['xaxis.range[0]']
+	const today = new Date();
+	const start = new Date(oldDate.split(' ')[0]);
+	const end   = today;
+        await loadOlderDays(start, end, false)
       }
     })
   } else {
@@ -478,8 +514,8 @@ const updateChart = async (isFirstCall) => {
     if (plot1.data) fig1.data[0].type = plot1.data[0].type
     Plotly.react('plot1', fig1.data, fig1.layout, config)
     Plotly.react('plot2', fig2.data, fig2.layout, config)
-    Plotly.react('heatmap', fig3.data, fig3.layout, config)
-    Plotly.react('scatter', fig4.data, fig4.layout, config)
+    //Plotly.react('heatmap', fig3.data, fig3.layout, config)
+    //Plotly.react('scatter', fig4.data, fig4.layout, config)
 
     const newX = new Date(getLatest(df.index))
     const oldX = new Date(plot1.layout.xaxis.range[1])
@@ -488,23 +524,22 @@ const updateChart = async (isFirstCall) => {
       plot1.layout.xaxis.range[1] = newX
     }
   }
-  const heatmap = document.getElementById('heatmap');
-  heatmap.on('plotly_click', (data) => {
-    console.log(data)
-    const scatter = document.getElementById('scatter');
-    const nameX = data.points[0].x
-    const nameY = data.points[0].y
+ // const heatmap = document.getElementById('heatmap');
+ // heatmap.on('plotly_click', (data) => {
+ //   const scatter = document.getElementById('scatter');
+ //   const nameX = data.points[0].x
+ //   const nameY = data.points[0].y
 
-    fig = plotScatterData(df,nameX,nameY)
+ //   fig = plotScatterData(df,nameX,nameY)
 
-    Plotly.react('scatter', fig.data, fig.layout, config);
-    const isDarkMode = getCookie('mode') === 'dark';
-    if (isDarkMode) {
-      Plotly.relayout('scatter', darkLayout);
-    } else {
-      Plotly.relayout('scatter', lightLayout);
-    }
-  })
+ //   Plotly.react('scatter', fig.data, fig.layout, config);
+ //   const isDarkMode = getCookie('mode') === 'dark';
+ //   if (isDarkMode) {
+ //     Plotly.relayout('scatter', darkLayout);
+ //   } else {
+ //     Plotly.relayout('scatter', lightLayout);
+ //   }
+ // })
   setInitialMode();
   console.log('Chart updated!')
-};
+}

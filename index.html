@@ -41,9 +41,14 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
   <body class="light-theme">
     <div class="navbar" id="navbar">
       <a class="warning" id="lastUpdate"></a>
-      <input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id">
-      <button class="btn" id="loadButton" onclick="updateChart()">Load Data</button>
-      <a class="btn" target="_blank" id="dataSrc">Get CSV</a>
+      <!--input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id"-->
+      <button class="btn" id="loadButton" onclick="updateChart(false,false,false)">Refresh</button>
+      <!--a class="btn" target="_blank" id="dataSrc">daily</a-->
+    </div>
+
+    <div id="message" class="message">
+      <p> Are you new here? make sure read the <a href="#disclaimer"><strong><span class='highlight'>DISCLAIMER</span></strong></a></p>
+      <p> Want to understand the data? Check the <a href="./notes/index.html"><strong class='highlight'>notes</strong></a>!</p>
     </div>
 
     <div class="content">
@@ -83,19 +88,12 @@ gtag('config', 'G-PR6JZSEC7J', { 'cookieFlags': 'SameSite=None; Secure' });
       </div>
     </div>
 
-    <div id="message" class="message">
-      <p> Are you new here? make sure read the <a href="#disclaimer"><strong><span class='highlight'>DISCLAIMER</span></strong></a></p>
-      <p> Not sure how to start? Load a dataset by <a href="?gistId=58ff8c58f93dedc7ea56f02e28bf19ef"><strong><span class='highlight'>clicking here!</span></strong></a></p>
-      <p> Maybe you want the <a href="?gistId=dcb615b33dacb288aeec8e8bb1ab40d9"><strong><span class='highlight'>Daily</span></strong></a> dataset?</p>
-      <p> Want to understand the data? Check the <a href="./notes/index.html"><strong class='highlight'>notes</strong></a>!</p>
-      <p> Are you looking for the <a href="./old/index.html" target="_blank"><strong class='highlight'>old site?</strong></a></p>
-    </div>
     <footer class="footer">
       <p>&copy; 2024 Nucoinha Explorer by Sashota Nakamota
       <span>&#x1F3F3;&#xFE0F;&#x200D;&#x26A7;&#xFE0F;&#x200D;&#x1F308;&#xFE0F;</span>
       </p>
       </br>
-      <h4>Crypto Wallet Addresses:</h4>
+      <h4>Donate Crypto:</h4>
       </br>
       <div class="crypto-table">
         <div class="crypto-address-row">
