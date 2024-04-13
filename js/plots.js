@@ -491,7 +491,15 @@ const updateChart = async (isFirstCall) => {
     // Plotly.newPlot('scatter', fig4.data, fig4.layout, config)
     bindPlot('plot1','plot2')
     const plot1 = document.getElementById('plot1')
+    const plot2 = document.getElementById('plot2')
     plot1.on('plotly_relayout', (event) => {
+      if (event['xaxis.range[0]']) {
+        const oldDate = event['xaxis.range[0]']
+        GLOBAL_STATE.oldestLoaded = new Date(oldDate.split(' ')[0]);
+        updateChart()
+      }
+    })
+    plot2.on('plotly_relayout', (event) => {
       if (event['xaxis.range[0]']) {
         const oldDate = event['xaxis.range[0]']
         GLOBAL_STATE.oldestLoaded = new Date(oldDate.split(' ')[0]);
