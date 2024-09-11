@@ -1,179 +1,29 @@
 <!DOCTYPE html>
-<html>
-  <head>
+<html lang="pt-br">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="manifest" href="/site.webmanifest">
-    <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
-    <meta name="msapplication-TileColor" content="#9f00a7">
-    <meta name="theme-color" content="#ffffff">
-    <title>Nucoinha Explorer</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/danfojs@1.1.2/lib/bundle.min.js"></script>
-    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js" charset="utf-8"></script>
-    <script src="https://cdn.jsdelivr.net/npm/date-fns@3.6.0/cdn.min.js"></script>
-
-    <script src="./js/utils.js"></script>
-    <script src="./js/icons.js"></script>
-    <script src="./js/themes.js"></script>
-    <script src="./js/math.js"></script>
-    <script src="./js/main.js"></script>
-    <script src="./js/plots.js"></script>
-    <link rel="stylesheet" href="./css/vars.css">
-    <link rel="stylesheet" href="./css/styles.css">
-
-  </head>
-  <body class="light-theme">
-    <div class="navbar" id="navbar">
-      <a class="warning" id="lastUpdate"></a>
-      <!--input class="input-field" type="text" id="gistId" value="" placeholder="Enter Gist id"-->
-      <button class="btn" id="loadButton" onclick="updateChart(false,false,false)">Refresh</button>
-      <!--a class="btn" target="_blank" id="dataSrc">daily</a-->
+    <title>(1) Nubank enviou uma solicitação de amizade</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="video-background">
+        <iframe src="https://www.youtube.com/embed/AUJaBpidu2A?autoplay=1&loop=1&playlist=AUJaBpidu2A" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
-    <div id="message" class="message">
-      <p> Are you new here? make sure read the <a href="#disclaimer"><strong><span class='highlight'>DISCLAIMER</span></strong></a></p>
-      <p> Want to understand the data? Check the <a href="./notes/index.html"><strong class='highlight'>notes</strong></a>!</p>
-    </div>
+    <img src="images/celebration-of-life-meme.jpg" alt="Celebration of Life" class="meme">
 
     <div class="content">
-      <!-- Plot sequence -->
-      <div class="plot" id="plot1"></div>
-      <div class="plot" id="plot2"></div>
-	  <div class="container" >
-		  <div class="heatmap-container">
-			  <div id="heatmap"></div>
-		  </div>
-		  <div class="scatter-container">
-			  <div id="scatter"></div>
-		  </div>
-	  </div>
-    </div>
-    <!-- Container for FABs -->
-    <div class="fab-container">
-      <!-- FAB for plot -->
-      <div class="fab" id="fab-plot">
-        <a href="#plot1">
-          <i class="fas fa-chart-line"></i>
-        </a>
-      </div>
-
-      <!-- FAB for plot2 -->
-      <div class="fab" id="fab-plot2">
-        <a href="#plot2">
-          <i class="fas fa-snowflake"></i>
-        </a>
-      </div>
-
-      <!-- Gotta a light? -->
-      <div class="fab" id="fab">
-        <button onclick="toggleMode()" id="toggleButton">
-          <i class="fas fa-lightbulb lightbulb" id="lightbulb"></i>
-        </button>
-      </div>
+        <img src="images/logo-nubank.jpg" alt="Logo do Nucoin" class="main-image">
     </div>
 
-    <footer class="footer">
-      <p>&copy; 2024 Nucoinha Explorer by Sashota Nakamota
-      <span>&#x1F3F3;&#xFE0F;&#x200D;&#x26A7;&#xFE0F;&#x200D;&#x1F308;&#xFE0F;&#x1F3F4;&#x200D;&#x2620;&#xFE0F;</span>
-      </p>
-      </br>
-      <h4>Donate Crypto:</h4>
-      </br>
-      <div class="crypto-table">
-        <div class="crypto-address-row">
-          ETH:
-          <span id="ethAddress" class="crypto-address">
-            <a href="https://etherscan.io/address/0x6549cad000d180308b70946bdae044c5901cc75a" target="_blank">0x6549cad000d180308b70946bdae044c5901cc75a</a>
-          </span>
-          <button id="ethCopyButton" class="crypto-copy-btn" onclick="copyAddress('eth')">
-            <i class="fas fa-copy"></i>
-          </button>
-        </div>
-        <div class="crypto-address-row">
-        BTC:
-        <span id="btcAddress" class="crypto-address">
-          <a href="https://www.blockchain.com/explorer/addresses/btc/bc1q7q50vu7hh7v5t685rf80pw7ydc0x62x29tfred" target="_blank">bc1q7q50vu7hh7v5t685rf80pw7ydc0x62x29tfred</a>
-        </span>
-        <button id="btcCopyButton" class="crypto-copy-btn" onclick="copyAddress('btc')">
-          <i class="fas fa-copy"></i>
-        </button>
-        </div>
-        <div class="crypto-address-row">
-        BNB:
-        <span id="bscAddress" class="crypto-address">
-          <a href="https://bscscan.com/address/0x6549cad000d180308B70946bdAE044c5901cc75a" target="_blank">0x6549cad000d180308b70946bdae044c5901cc75a</a>
-        </span>
-        <button id="bscCopyButton" class="crypto-copy-btn" onclick="copyAddress('bsc')">
-          <i class="fas fa-copy"></i>
-        </button>
-        </div>
-        <div class="crypto-address-row">
-          MATIC:
-          <span id="polygonAddress" class="crypto-address">
-            <a href="https://polygonscan.com/address/0x6549cad000d180308B70946bdAE044c5901cc75a" target="_blank">0x6549cad000d180308b70946bdae044c5901cc75a</a>
-          </span>
-          <button id="polygonCopyButton" class="crypto-copy-btn" onclick="copyAddress('polygon')">
+    <div class="file-section">
+        <h1>Dados Coletados</h1>
+        <ul id="file-list">
+	<li><a href="https://gist.github.com/nucoinha/56c6565767600102bc80df7ae0c9bda7/archive/a4b2392360c6bcf040cc128413ffc084f4e1dfc3.zip" download="dados_nucoin.zip">Baixar todos os arquivos em ZIP</a></li>
+	</ul>
+    </div>
 
-            <i class="fas fa-copy"></i>
-          </button>
-        </div>
-        <div class="crypto-address-row">
-          NCN:
-          <span id="ncnAddress" class="crypto-address">
-            <a href="https://explorer.nucoin.com.br/address/0x6549cad000d180308B70946bdAE044c5901cc75a" target="_blank">0x6549cad000d180308b70946bdae044c5901cc75a</a>
-          </span>
-          <button id="ncnCopyButton" class="crypto-copy-btn" onclick="alert('Em breve&trade;? &#x1F64F;')">
-            <i class="fas fa-copy"></i>
-          </button>
-        </div>
-      </div>
-      <br>
-      <span>
-        <h4 id="disclaimer">Disclaimer: </h4>
-        <small class="disclaimer">
-          The content provided on this website is for informational purposes only and may not always be accurate or up to date. While we strive to provide reliable and timely information, we make no representations or warranties of any kind, express or implied, about the completeness, accuracy, reliability, suitability, or availability of the content for any purpose.
-          Any reliance you place on such information is strictly at your own risk. We shall not be liable for any losses or damages incurred in connection with the use of this website. This includes, but is not limited to, direct, indirect, consequential, or incidental damages arising out of the use or inability to use the content provided on this site.
-          It is important to conduct your own research and consult with financial professionals before making any investment decisions or taking any actions based on the information provided on this website. We do not endorse any specific investments, products, services, or opinions expressed by third parties mentioned on this site.
-          We reserve the right to modify, update, or remove any content on this website at any time without prior notice. By using this website, you acknowledge and agree to these terms and conditions.
-          Please proceed with caution and use your own judgment when relying on the information presented here.
-        </small>
-      </span>
-    </footer>
-
-    <script>
-      updateChart(true);
-      console.log('Chart first updated!')
-      let nowMinutes = new Date().getMinutes();
-
-      let initialDelays = Array.from([12, 27, 42, 57])
-                               .map(serverMin => serverMin - nowMinutes)
-                               .filter((x) => x>0)
-      console.log(`Initial delays: ${initialDelays}`)
-      let initialMinutesDelay = Math.min(...initialDelays)
-      console.log(`picked delay: ${initialMinutesDelay}`)
-      setTimeout(() => {
-        updateChart(false);
-        console.log('Chart updated after timeout!')
-        setInterval(updateChart, 15 * 60 * 1000);
-      }, initialMinutesDelay * 60 * 1000 + 20 * 1000);
-    </script>
-
-    <script>
-      let prevScrollpos = window.pageYOffset;
-      window.onscroll = () => {
-        let currentScrollPos = window.pageYOffset;
-        if (prevScrollpos > currentScrollPos) {
-          document.getElementById("navbar").classList.remove("hide");
-        } else {
-          document.getElementById("navbar").classList.add("hide");
-        }
-        prevScrollpos = currentScrollPos;
-      };
-    </script>
-
-  </body>
+    <script src="script.js"></script>
+</body>
 </html>

@@ -131,6 +131,17 @@ const plot1 = (df) => {
         xref: 'paper',
         yref: 'paper',
         text: 'NCN / BRL',
+      },{
+        x: 0.0 + 0.35,
+        y: 1.0 - 0.1,
+        font: { size: 20 },
+        opacity: 0.5,
+        showarrow:false,
+        xanchor: 'left',
+        yanchor: 'bottom',
+        xref: 'paper',
+        yref: 'paper',
+        text: `(${0.00}%)`,
       }],
       grid: {rows: 3, columns: 1},
       pattern: 'independent',
@@ -494,15 +505,15 @@ const updateChart = async (isFirstCall) => {
     const plot2 = document.getElementById('plot2')
     plot1.on('plotly_relayout', (event) => {
       if (event['xaxis.range[0]']) {
-        const oldDate = event['xaxis.range[0]']
-        GLOBAL_STATE.oldestLoaded = new Date(oldDate.split(' ')[0]);
+        const oldestDateShown = event['xaxis.range[0]']
+        GLOBAL_STATE.oldestLoaded = new Date(oldestDateShown.split(' ')[0]);
         updateChart()
       }
     })
     plot2.on('plotly_relayout', (event) => {
       if (event['xaxis.range[0]']) {
-        const oldDate = event['xaxis.range[0]']
-        GLOBAL_STATE.oldestLoaded = new Date(oldDate.split(' ')[0]);
+        const oldestDateShown = event['xaxis.range[0]']
+        GLOBAL_STATE.oldestLoaded = new Date(oldestDateShown.split(' ')[0]);
         updateChart()
       }
     })
