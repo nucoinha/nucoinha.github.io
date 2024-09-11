@@ -2,7 +2,8 @@
 const GLOBAL_GIST_ID = '56c6565767600102bc80df7ae0c9bda7' 
 
 const getToday = () => {
-  date = new Date();
+  //date = new Date();
+  date = new Date(2024, 8, 10)
   date.setHours(0,0,0,0);
   return date;
 }
